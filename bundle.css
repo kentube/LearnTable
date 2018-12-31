@@ -1,0 +1,241 @@
+.Actions span {
+    border-radius: 150%;
+    border: 2px solid black;
+    color: black;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    height: 25px;
+    margin: 5px 15px 5px 15px;
+    padding-top: 6px;
+    text-align: center;
+    transition-duration: 0.1s;
+    transition-property: transform;
+    width: 33px;
+  }
+  
+  .Actions span:hover {
+    transform: scale(1.1);
+  }
+  
+  .Actions .ActionsInfo {
+    border-color: #3498DB;
+    color: #3498DB;
+  }
+  
+  .Actions .ActionsDelete {
+    border-color: #B7477D;
+    color: #B7477D;
+  }.Button {
+    background-color: #6f001b;
+    border-radius: 28px;
+    border: 0;
+    box-shadow: 0px 1px 1px #d9d9d9;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 15px;
+    text-decoration: none;
+    transition-duration: 0.1s;
+    transition-property: transform;
+}
+.Button:hover {
+    transform: scale(1.1);
+}
+.Dialog {
+    border: 1px solid lightgray;
+  }
+  
+  .DialogModalOpen {
+    overflow: hidden; /* no body scroll */
+  }
+  
+  .Dialog .DialogHeader {
+    background-color: #6F001B;
+    color: #F0F0F0;
+    font-family: Norican, cursive;
+    font-size: 42px;
+    margin: 0;
+    padding: 10px 10px 10px 20px;
+    text-align: left;
+  }
+  
+  .Dialog .DialogBody {
+    border-bottom: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+    max-height: 50vh;
+    overflow-x: hidden;
+    padding: 10px 30px 30px 30px;
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  .Dialog .DialogFooter {
+    padding: 10px;
+    text-align: right;
+  }
+  
+  .DialogModal {
+      background: rgba(0, 0, 0, 0.7);
+      bottom: 0;
+      left: 0;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 1;
+  }
+  
+  .DialogModal .DialogModalWrap {
+      background: white;
+      margin: 5% auto;
+      width: 350px;
+  }
+  
+  .DialogDismiss {
+    color: gray;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .DialogFooter .Button {
+    margin: 10px;
+  }.Excel input {
+    font: 16px Arial;
+  }
+  
+  .Excel td {
+    background-color: #ffffff;
+    padding: 5px;
+  }
+  
+  .Excel th {
+    color: #e01e1e;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: normal;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  .Excel table {
+    width: 100%;
+  }
+  
+  .Excel .ExcelNotSortable {
+    cursor: default;
+  }
+  
+  .Excel .ExcelEditable {
+    cursor: cell;
+  }
+  
+  .Excel .ExcelEditable:hover {
+    background: #FBFBFB;
+  }
+  
+  .Excel .ExcelDataCenter {
+    text-align: center;
+  }
+  
+  .Excel .ExcelDataLeft {
+    padding: 0 10px;
+    text-align: left;
+  }
+  
+  .Excel .ExcelDataRight {
+    text-align: right;
+  }
+  .Form .FormLabel {
+    color: rgb(207, 8, 8);
+    display: block;
+    font-size: 12px;
+    padding: 12px 0 6px;
+  }
+  
+  .Form .FormRow {
+    padding-left: 20px;
+    text-align: left;
+  }.FormInput {
+  background: gold
+}
+.Logo {
+  background-image: url('images/winepad-logo.png');
+  background-size: cover;
+  display: inline-block;
+  height: 60px;
+  vertical-align: middle;
+  width: 100px;
+}/* thanks to https://css-tricks.com/star-ratings/ */
+.Rating {
+    cursor: pointer;
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 28px;
+  }
+  
+  .Rating.RatingReadonly{
+    cursor: auto;
+  }
+  
+  .Rating > span {
+    color: grey;
+    display: inline-block;
+    position: relative;
+    width: 1.1em;
+  }
+  
+  .Rating .RatingOn:before {
+     color: gold;
+     content: "\2605";
+     left: 0; 
+     padding: 1px;
+     position: absolute;
+  }
+  .Suggest {
+    background-color: #4ba8b4;
+}
+.Whinepad .WhinepadToolbar {
+    margin: 40px;
+  }
+  
+  .Whinepad .WhinepadToolbarAdd {
+    float: left;
+  }
+  
+  .Whinepad .WhinepadToolbarSearch {
+    float: right;
+  }
+  
+  .Whinepad .WhinepadToolbarAddButton {
+    font-size: 32px;
+  }
+  
+  .Whinepad .WhinepadDatagrid {
+    clear: both;
+    margin: 40px;
+    padding-top: 20px;
+  }
+  
+  html {
+  background: rgb(5, 129, 190);
+  font: 26px Arial;
+}
+
+.schema-name {
+    color: #333333;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .schema-year {
+    color: gray;
+    font-size: 16px;
+  }
+  
+  .schema-grape {
+    color: #921130;
+    font-size: 16px;
+    font-weight: bold;
+  }
