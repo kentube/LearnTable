@@ -15,6 +15,47 @@ class Whinepad extends Component {
         };
         this._preSearchData = null;
     }
+    
+    _convertToCSV(objArray) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        var str = '';
+        for (var i = 0; i < array.length; i++) {
+            var line = '';
+            for (var index in array[i]) {
+                if (line != '') line += ','
+                line += array[i][index];
+            }
+            str += line + '\r\n';
+        }
+        return str;
+    }
+
+    _download(format, ev) {
+        //var format = 'json';
+        var contents = format === 'json' 
+          ? JSON.stringify(this.state.data)
+          : this._convertToCSV(this.state.data);
+        //   : this.state.data.reduce(function(result, row) {
+        //       return result
+        //         + row.reduce(function(rowresult, cell, idx) {
+        //             return rowresult 
+        //               + '"' 
+        //               + cell.replace(/"/g, '""')
+        //               + '"'
+        //               + (idx < row.length - 1 ? ',' : '');
+        //           }, '')
+        //         + "\n";
+        //     }, '');
+        
+        var URL = window.URL || window.webkitURL;
+        // eslint-disable-next-line no-console
+        // console.log('contents='+ contents);
+
+        var blob = new Blob([contents], {type: 'text/' + format});
+        ev.target.href = URL.createObjectURL(blob);
+        ev.target.download = 'data.' + format;
+    }
+
     _addNewDialog() {
         this.setState({ addnew: true });
     }
@@ -55,7 +96,9 @@ class Whinepad extends Component {
         const fields = this.props.schema.map(item => item.id);
         const searchdata = this._preSearchData.filter(row => {
             for (let f = 0; f < fields.length; f++) {
-                if (row[fields[f]].toString().toLowerCase().indexOf(needle) > -1) {
+                if (row[fields[f]] != null 
+                    && row[fields[f]].toString().toLowerCase().indexOf(needle) > -1) 
+                {
                     return true;
                 }
             }
@@ -73,6 +116,15 @@ class Whinepad extends Component {
                             className="WhinepadToolbarAddButton">
                             + add
                         </Button>
+                    </div>                    
+                    <div className="WhinepadToolbarDownload">
+                        <Button
+                            onClick={this._download.bind(this, 'json')}
+                            className="WhinepadToolbarDownloadButton">
+                            Export
+                        </Button>
+                        <a onClick={this._download.bind(this, 'json')} href="data.json"> Export JSON</a>
+                        <a onClick={this._download.bind(this, 'csv')} href="data.csv"> Export CSV</a>
                     </div>
                     <div className="WhinepadToolbarSearch">
                         <input

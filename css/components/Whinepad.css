@@ -1,5 +1,6 @@
 .Whinepad .WhinepadToolbar {
     margin: 40px;
+    font: 16px Arial;
   }
   
   .Whinepad .WhinepadToolbarAdd {
@@ -14,6 +15,10 @@
     font-size: 32px;
   }
   
+  .Whinepad .WhinepadToolbarDownloadButton {
+    font-size: 16px;
+  }
+
   .Whinepad .WhinepadDatagrid {
     clear: both;
     margin: 40px;
