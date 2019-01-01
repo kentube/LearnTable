@@ -174,10 +174,15 @@ class Excel extends Component {
                 </thead>
                 <tbody onDoubleClick={this._showEditor.bind(this)}>
                     {this.state.data.map((row, rowidx) => {
+                        //let cellIdx = 0;
                         return (
                             <tr key={rowidx}>{
-                                Object.keys(row).map((cell, idx) => {
-                                    const schema = this.props.schema[idx];
+                                //Object.keys(row).map((cell, idx) => {
+                                this.props.schema.map((schema, idx) => {
+                                    let cell = schema.id;
+                                    //let idx = cellIdx++;
+                                //}, this);
+                                //    const schema = this.props.schema[idx];
                                     if (!schema || !schema.show) {
                                         return null;
                                     }
@@ -211,7 +216,8 @@ class Excel extends Component {
                                             {content}
                                         </td>
                                     );
-                                }, this)}
+                                }, this)
+                                }
                                 <td className="ExcelDataCenter">
                                     <Actions onAction={this._actionClick.bind(this, rowidx)} />
                                 </td>
