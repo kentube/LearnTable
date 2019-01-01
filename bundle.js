@@ -525,13 +525,19 @@ var Excel = function (_Component) {
                     'tbody',
                     { onDoubleClick: this._showEditor.bind(this) },
                     this.state.data.map(function (row, rowidx) {
+                        //let cellIdx = 0;
                         return _react2.default.createElement(
                             'tr',
                             { key: rowidx },
-                            Object.keys(row).map(function (cell, idx) {
+
+                            //Object.keys(row).map((cell, idx) => {
+                            _this2.props.schema.map(function (schema, idx) {
                                 var _classNames;
 
-                                var schema = _this2.props.schema[idx];
+                                var cell = schema.id;
+                                //let idx = cellIdx++;
+                                //}, this);
+                                //    const schema = this.props.schema[idx];
                                 if (!schema || !schema.show) {
                                     return null;
                                 }
@@ -1078,6 +1084,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _Button = require('./Button');
@@ -1134,6 +1142,46 @@ var Whinepad = function (_Component) {
     }
 
     _createClass(Whinepad, [{
+        key: '_convertToCSV',
+        value: function _convertToCSV(objArray) {
+            var array = (typeof objArray === 'undefined' ? 'undefined' : _typeof(objArray)) != 'object' ? JSON.parse(objArray) : objArray;
+            var str = '';
+            for (var i = 0; i < array.length; i++) {
+                var line = '';
+                for (var index in array[i]) {
+                    if (line != '') line += ',';
+                    line += array[i][index];
+                }
+                str += line + '\r\n';
+            }
+            return str;
+        }
+    }, {
+        key: '_download',
+        value: function _download(format, ev) {
+            //var format = 'json';
+            var contents = format === 'json' ? JSON.stringify(this.state.data) : this._convertToCSV(this.state.data);
+            //   : this.state.data.reduce(function(result, row) {
+            //       return result
+            //         + row.reduce(function(rowresult, cell, idx) {
+            //             return rowresult 
+            //               + '"' 
+            //               + cell.replace(/"/g, '""')
+            //               + '"'
+            //               + (idx < row.length - 1 ? ',' : '');
+            //           }, '')
+            //         + "\n";
+            //     }, '');
+
+            var URL = window.URL || window.webkitURL;
+            // eslint-disable-next-line no-console
+            // console.log('contents='+ contents);
+
+            var blob = new Blob([contents], { type: 'text/' + format });
+            ev.target.href = URL.createObjectURL(blob);
+            ev.target.download = 'data.' + format;
+        }
+    }, {
         key: '_addNewDialog',
         value: function _addNewDialog() {
             this.setState({ addnew: true });
@@ -1189,7 +1237,7 @@ var Whinepad = function (_Component) {
             });
             var searchdata = this._preSearchData.filter(function (row) {
                 for (var f = 0; f < fields.length; f++) {
-                    if (row[fields[f]].toString().toLowerCase().indexOf(needle) > -1) {
+                    if (row[fields[f]] != null && row[fields[f]].toString().toLowerCase().indexOf(needle) > -1) {
                         return true;
                     }
                 }
@@ -1215,6 +1263,27 @@ var Whinepad = function (_Component) {
                                 onClick: this._addNewDialog.bind(this),
                                 className: 'WhinepadToolbarAddButton' },
                             '+ add'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'WhinepadToolbarDownload' },
+                        _react2.default.createElement(
+                            _Button2.default,
+                            {
+                                onClick: this._download.bind(this, 'json'),
+                                className: 'WhinepadToolbarDownloadButton' },
+                            'Export'
+                        ),
+                        _react2.default.createElement(
+                            'a',
+                            { onClick: this._download.bind(this, 'json'), href: 'data.json' },
+                            ' Export JSON'
+                        ),
+                        _react2.default.createElement(
+                            'a',
+                            { onClick: this._download.bind(this, 'csv'), href: 'data.csv' },
+                            ' Export CSV'
                         )
                     ),
                     _react2.default.createElement(
@@ -1278,6 +1347,12 @@ exports.default = [{
     show: true, // show in the `Excel` table
     sample: '$2 chuck',
     align: 'left' // align in `Excel`
+}, {
+    id: 'link',
+    label: 'Link',
+    type: 'text',
+    show: true,
+    sample: 'https://abc.com'
 }, {
     id: 'year',
     label: 'Year',
