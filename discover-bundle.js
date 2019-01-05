@@ -58,7 +58,7 @@ Actions.defaultProps = {
 };
 
 exports.default = Actions;
-},{"prop-types":16,"react":23}],2:[function(require,module,exports){
+},{"prop-types":17,"react":24}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -93,7 +93,7 @@ Button.propTypes = {
 };
 
 exports.default = Button;
-},{"classnames":10,"prop-types":16,"react":23}],3:[function(require,module,exports){
+},{"classnames":11,"prop-types":17,"react":24}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -204,7 +204,111 @@ Dialog.defaultProps = {
 };
 
 exports.default = Dialog;
-},{"./Button":2,"prop-types":16,"react":23}],4:[function(require,module,exports){
+},{"./Button":2,"prop-types":17,"react":24}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+//import * as React from "react";
+
+
+var FileSelector = function (_React$Component) {
+  _inherits(FileSelector, _React$Component);
+
+  function FileSelector(props) {
+    _classCallCheck(this, FileSelector);
+
+    var _this = _possibleConstructorReturn(this, (FileSelector.__proto__ || Object.getPrototypeOf(FileSelector)).call(this, props));
+
+    _this.state = { files: null };
+    return _this;
+  }
+
+  // onAction(f){
+  //     // eslint-disable-next-line no-console
+  //     console.log('onAction: f is ' + f);
+  // }
+
+  _createClass(FileSelector, [{
+    key: 'processFileChange',
+    value: function processFileChange(e) {
+      var files4 = e.target.files; // FileList object
+      // Loop through the FileList and render image files as thumbnails.
+      // eslint-disable-next-line no-cond-assign
+      for (var i = 0, f; f = files4[i]; i++) {
+        var fileResult = 'No value';
+        var reader = new FileReader();
+        // Closure to capture the file information.
+        reader.onload = function (theFile, onAction) {
+          return function (e) {
+            fileResult = e.target.result;
+            // eslint-disable-next-line no-console
+            // console.log("fileResult is " + fileResult);
+
+            onAction.bind(this, fileResult)();
+          };
+        }(f, this.props.onAction);
+        reader.readAsText(f);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'FileSelector' },
+        _react2.default.createElement('button', _extends({}, this.props, { className: 'Button FileSelectorButton', onClick: function onClick() {
+            return _this2.inputElement.click();
+          } })),
+        _react2.default.createElement('input', { type: 'file', style: { display: 'none', width: '0px' }, ref: function ref(input) {
+            return _this2.inputElement = input;
+          }, onChange: function onChange(e) {
+            _this2.processFileChange(e);
+
+            var files = e.target.files;
+            _this2.setState({ files: files });
+          }
+        })
+      );
+    }
+  }]);
+
+  return FileSelector;
+}(_react2.default.Component);
+
+FileSelector.propTypes = {
+  onAction: _propTypes2.default.func.isRequired
+};
+
+// FileSelector.defaultProps = {
+//   onAction: () => { },
+// };
+
+exports.default = FileSelector;
+},{"prop-types":17,"react":24}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -322,7 +426,7 @@ Form.propTypes = {
 };
 
 exports.default = Form;
-},{"./FormInput":5,"./Rating":7,"prop-types":16,"react":23}],5:[function(require,module,exports){
+},{"./FormInput":6,"./Rating":8,"prop-types":17,"react":24}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -385,6 +489,8 @@ var FormInput = function (_Component) {
                     return _react2.default.createElement('input', _extends({}, common, {
                         type: 'number',
                         defaultValue: this.props.defaultValue || new Date().getFullYear() }));
+                case 'file':
+                    return _react2.default.createElement('input', _extends({}, common, { type: 'file' }));
                 case 'suggest':
                     return _react2.default.createElement(_Suggest2.default, _extends({}, common, { options: this.props.options }));
                 case 'rating':
@@ -402,14 +508,14 @@ var FormInput = function (_Component) {
 }(_react.Component);
 
 FormInput.propTypes = {
-    type: _propTypes2.default.oneOf(['year', 'suggest', 'rating', 'text', 'input']),
+    type: _propTypes2.default.oneOf(['year', 'suggest', 'rating', 'text', 'input', 'file']),
     id: _propTypes2.default.string,
     options: _propTypes2.default.array, // as in auto-complete <option>s
     defaultValue: _propTypes2.default.any
 };
 
 exports.default = FormInput;
-},{"./Rating":7,"./Suggest":8,"prop-types":16,"react":23}],6:[function(require,module,exports){
+},{"./Rating":8,"./Suggest":9,"prop-types":17,"react":24}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -450,7 +556,7 @@ var Logo = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Logo;
-},{"react":23}],7:[function(require,module,exports){
+},{"react":24}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -532,18 +638,29 @@ var Rating = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             var stars = [];
-            for (var i = 1; i <= this.props.max; i++) {
+
+            var _loop = function _loop(i) {
                 stars.push(_react2.default.createElement(
                     'span',
                     {
-                        className: i <= this.state.tmpRating ? 'RatingOn' : null,
+                        className: i <= _this2.state.tmpRating ? 'RatingOn' : null,
                         key: i,
-                        onClick: !this.props.readonly && this.setRating.bind(this, i),
-                        onMouseOver: !this.props.readonly && this.setTemp.bind(this, i)
+                        onClick: function onClick() {
+                            return !_this2.props.readonly && _this2.setRating.bind(_this2, i);
+                        },
+                        onMouseOver: function onMouseOver() {
+                            return !_this2.props.readonly && _this2.setTemp.bind(_this2, i);
+                        }
                     },
                     '\u2606'
                 ));
+            };
+
+            for (var i = 1; i <= this.props.max; i++) {
+                _loop(i);
             }
             return _react2.default.createElement(
                 'div',
@@ -578,7 +695,7 @@ Rating.defaultProps = {
 };
 
 exports.default = Rating;
-},{"classnames":10,"prop-types":16,"react":23}],8:[function(require,module,exports){
+},{"classnames":11,"prop-types":17,"react":24}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -696,8 +813,12 @@ Suggest.propTypes = {
 };
 
 exports.default = Suggest;
-},{"prop-types":16,"react":23}],9:[function(require,module,exports){
+},{"prop-types":17,"react":24}],10:[function(require,module,exports){
 'use strict';
+
+var _FileSelector = require('./components/FileSelector');
+
+var _FileSelector2 = _interopRequireDefault(_FileSelector);
 
 var _Dialog = require('./components/Dialog');
 
@@ -934,6 +1055,21 @@ _reactDom2.default.render(_react2.default.createElement(
                                         null,
                                         _react2.default.createElement(_FormInput2.default, { type: 'text' })
                                 )
+                        ),
+                        _react2.default.createElement(
+                                'tr',
+                                null,
+                                _react2.default.createElement(
+                                        'td',
+                                        null,
+                                        'File Input'
+                                ),
+                                '      ',
+                                _react2.default.createElement(
+                                        'td',
+                                        null,
+                                        _react2.default.createElement(_FormInput2.default, { type: 'file' })
+                                )
                         )
                 )
         ),
@@ -945,6 +1081,18 @@ _reactDom2.default.render(_react2.default.createElement(
         _react2.default.createElement(_Form2.default, {
                 fields: [{ label: 'Rating', type: 'rating', id: 'rateme' }, { label: 'Greetings', id: 'freetext' }],
                 initialData: { rateme: 4, freetext: 'Hello' } }),
+        _react2.default.createElement(
+                'h2',
+                null,
+                'File Selector'
+        ),
+        _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(_FileSelector2.default, { onAction: function onAction(f) {
+                                return alert("Processing..." + f);
+                        } })
+        ),
         _react2.default.createElement(
                 'h2',
                 null,
@@ -979,7 +1127,7 @@ _reactDom2.default.render(_react2.default.createElement(
                 )
         )
 ), document.getElementById('pad'));
-},{"./components/Actions":1,"./components/Button":2,"./components/Dialog":3,"./components/Form":4,"./components/FormInput":5,"./components/Logo":6,"./components/Rating":7,"./components/Suggest":8,"react":23,"react-dom":20}],10:[function(require,module,exports){
+},{"./components/Actions":1,"./components/Button":2,"./components/Dialog":3,"./components/FileSelector":4,"./components/Form":5,"./components/FormInput":6,"./components/Logo":7,"./components/Rating":8,"./components/Suggest":9,"react":24,"react-dom":21}],11:[function(require,module,exports){
 /*!
   Copyright (c) 2017 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1033,7 +1181,7 @@ _reactDom2.default.render(_react2.default.createElement(
 	}
 }());
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -1125,7 +1273,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1311,7 +1459,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -1406,7 +1554,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":17,"_process":12}],14:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":18,"_process":13}],15:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1467,7 +1615,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":17}],15:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":18}],16:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -2026,7 +2174,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":13,"./lib/ReactPropTypesSecret":17,"_process":12,"object-assign":11}],16:[function(require,module,exports){
+},{"./checkPropTypes":14,"./lib/ReactPropTypesSecret":18,"_process":13,"object-assign":12}],17:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -2058,7 +2206,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":14,"./factoryWithTypeCheckers":15,"_process":12}],17:[function(require,module,exports){
+},{"./factoryWithThrowingShims":15,"./factoryWithTypeCheckers":16,"_process":13}],18:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2072,7 +2220,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (process){
 /** @license React v16.7.0
  * react-dom.development.js
@@ -22161,7 +22309,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":12,"object-assign":11,"prop-types/checkPropTypes":13,"react":23,"scheduler":28,"scheduler/tracing":29}],19:[function(require,module,exports){
+},{"_process":13,"object-assign":12,"prop-types/checkPropTypes":14,"react":24,"scheduler":29,"scheduler/tracing":30}],20:[function(require,module,exports){
 /** @license React v16.7.0
  * react-dom.production.min.js
  *
@@ -22412,7 +22560,7 @@ void 0:t("40");return a._reactRootContainer?(Uh(function(){fi(null,null,a,!1,fun
 Ka,La,Ca.injectEventPluginsByName,qa,Ra,function(a){za(a,Qa)},Ib,Jb,Jd,Ea]}};function hi(a,b){di(a)?void 0:t("299","unstable_createRoot");return new ci(a,!0,null!=b&&!0===b.hydrate)}(function(a){var b=a.findFiberByHostInstance;return We(n({},a,{overrideProps:null,findHostInstanceByFiber:function(a){a=nd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ia,bundleType:0,version:"16.7.0",rendererPackageName:"react-dom"});
 var li={default:ki},mi=li&&ki||li;module.exports=mi.default||mi;
 
-},{"object-assign":11,"react":23,"scheduler":28}],20:[function(require,module,exports){
+},{"object-assign":12,"react":24,"scheduler":29}],21:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -22454,7 +22602,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":18,"./cjs/react-dom.production.min.js":19,"_process":12}],21:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":19,"./cjs/react-dom.production.min.js":20,"_process":13}],22:[function(require,module,exports){
 (function (process){
 /** @license React v16.7.0
  * react.development.js
@@ -24341,7 +24489,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":12,"object-assign":11,"prop-types/checkPropTypes":13}],22:[function(require,module,exports){
+},{"_process":13,"object-assign":12,"prop-types/checkPropTypes":14}],23:[function(require,module,exports){
 /** @license React v16.7.0
  * react.production.min.js
  *
@@ -24367,7 +24515,7 @@ _currentValue:a,_currentValue2:a,_threadCount:0,Provider:null,Consumer:null};a.P
 if(null!=b){void 0!==b.ref&&(h=b.ref,f=K.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)L.call(b,c)&&!M.hasOwnProperty(c)&&(d[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)d.children=e;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];d.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:d,_owner:f}},createFactory:function(a){var b=N.bind(null,a);b.type=a;return b},isValidElement:O,version:"16.7.0",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:K,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":11}],23:[function(require,module,exports){
+},{"object-assign":12}],24:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -24378,7 +24526,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":21,"./cjs/react.production.min.js":22,"_process":12}],24:[function(require,module,exports){
+},{"./cjs/react.development.js":22,"./cjs/react.production.min.js":23,"_process":13}],25:[function(require,module,exports){
 (function (process){
 /** @license React v0.12.0
  * scheduler-tracing.development.js
@@ -24805,7 +24953,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":12}],25:[function(require,module,exports){
+},{"_process":13}],26:[function(require,module,exports){
 /** @license React v0.12.0
  * scheduler-tracing.production.min.js
  *
@@ -24817,7 +24965,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.12.0
  * scheduler.development.js
@@ -25524,7 +25672,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":12}],27:[function(require,module,exports){
+},{"_process":13}],28:[function(require,module,exports){
 (function (global){
 /** @license React v0.12.0
  * scheduler.production.min.js
@@ -25549,7 +25697,7 @@ b=d.previous;b.next=d.previous=a;a.next=d;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!f&&(null!==c&&c.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==c&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return c};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25560,7 +25708,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":26,"./cjs/scheduler.production.min.js":27,"_process":12}],29:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":27,"./cjs/scheduler.production.min.js":28,"_process":13}],30:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25571,4 +25719,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":24,"./cjs/scheduler-tracing.production.min.js":25,"_process":12}]},{},[9]);
+},{"./cjs/scheduler-tracing.development.js":25,"./cjs/scheduler-tracing.production.min.js":26,"_process":13}]},{},[10]);

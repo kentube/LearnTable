@@ -1,13 +1,128 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Wine Pad - Discover Components</title>
+    <title>Discover Components</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="bundle.css">
   </head>
   <body>
     <div id="pad"></div>
     <script src="discover-bundle.js"></script>
+
+
+    
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="filelist"></output>
+    <script>
+        function handleFileSelect(evt) {
+          var files = evt.target.files; // FileList object        
+          // files is a FileList of File objects. List some properties.
+          var output = [];
+          for (var i = 0, f; f = files[i]; i++) {
+            output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                        f.size, ' bytes, last modified: ',
+                        f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                        '</li>');
+          }
+          document.getElementById('filelist').innerHTML = '<ul>' + output.join('') + '</ul>';
+        }        
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+    </script>
+
+<div id="drop_zone">Drop files here</div>
+<output id="droplist"></output>
+<script>
+function handleDropSelect(evt) {
+  evt.stopPropagation();
+  evt.preventDefault();
+  var files = evt.dataTransfer.files; // FileList object.
+  // files is a FileList of File objects. List some properties.
+  var output = [];
+  for (var i = 0, f; f = files[i]; i++) {
+    output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                f.size, ' bytes, last modified: ',
+                f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                '</li>');
+  }
+  document.getElementById('droplist').innerHTML = '<ul>' + output.join('') + '</ul>';
+}
+function handleDragOver(evt) {
+  evt.stopPropagation();
+  evt.preventDefault();
+  evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+}
+// Setup the dnd listeners.
+var dropZone = document.getElementById('drop_zone');
+dropZone.addEventListener('dragover', handleDragOver, false);
+dropZone.addEventListener('drop', handleFileSelect, false);
+</script>
+
+<style>
+  .thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+  }
+</style>  
+<input type="file" id="files3" name="files[]" multiple />
+<output id="list3"></output>  
+<script>
+  function handleFileSelect3(evt) {
+    var files = evt.target.files; // FileList object
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {  
+      // Only process image files.
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+      var reader = new FileReader();  
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          var span = document.createElement('span');
+          span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                            '" title="', escape(theFile.name), '"/>'].join('');
+          document.getElementById('list3').insertBefore(span, null);
+        };
+      })(f);
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
+  }  
+  document.getElementById('files3').addEventListener('change', handleFileSelect3, false);
+</script>
+
+
+<hr />
+<input type="file" id="files4" name="files[]" multiple />
+<output id="list4"></output>
+<hr />
+<script>
+function handleFileSelect4(evt) {
+  var files = evt.target.files; // FileList object
+  // Loop through the FileList and render image files as thumbnails.
+  for (var i = 0, f; f = files[i]; i++) {
+    fileResult = 'No value';
+    var reader = new FileReader();  
+    // Closure to capture the file information.
+    reader.onload = (function(theFile) {
+      return function(e) {
+        fileResult = e.target.result;
+        console.log(fileResult);
+        // var span = document.createElement('span');
+        // span.innerHTML = ['<p>', fileResult,
+        //                   ' ... ', escape(theFile.name), '</p>'].join('');
+        // document.getElementById('list4').insertBefore(span, null);
+      };
+    })(f);
+    reader.readAsText(f);
+  }
+}  
+document.getElementById('files4').addEventListener('change', handleFileSelect4, false);
+</script>
+
+
   </body>
 </html>
 

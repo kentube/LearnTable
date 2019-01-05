@@ -147,7 +147,13 @@
   .Excel .ExcelDataRight {
     text-align: right;
   }
-  .Form .FormLabel {
+  .FileSelector {
+  
+}
+
+.FileSelector .FileSelectorButton {
+  font-size: 16px;
+}.Form .FormLabel {
     color: rgb(207, 8, 8);
     display: block;
     font-size: 12px;
