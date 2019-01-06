@@ -44,7 +44,7 @@ _reactDom2.default.render(_react2.default.createElement(
   ),
   _react2.default.createElement(_Whinepad2.default, { schema: _schema2.default, initialData: data })
 ), document.getElementById('pad'));
-},{"./components/Logo":10,"./components/Whinepad":13,"./schema":14,"react":28,"react-dom":25}],2:[function(require,module,exports){
+},{"./components/Logo":10,"./components/Whinepad":14,"./schema":15,"react":29,"react-dom":26}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -113,7 +113,7 @@ Actions.defaultProps = {
 };
 
 exports.default = Actions;
-},{"prop-types":21,"react":28}],4:[function(require,module,exports){
+},{"prop-types":22,"react":29}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -148,7 +148,7 @@ Button.propTypes = {
 };
 
 exports.default = Button;
-},{"classnames":15,"prop-types":21,"react":28}],5:[function(require,module,exports){
+},{"classnames":16,"prop-types":22,"react":29}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -259,7 +259,7 @@ Dialog.defaultProps = {
 };
 
 exports.default = Dialog;
-},{"./Button":4,"prop-types":21,"react":28}],6:[function(require,module,exports){
+},{"./Button":4,"prop-types":22,"react":29}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -585,7 +585,7 @@ Excel.propTypes = {
 };
 
 exports.default = Excel;
-},{"./Actions":3,"./Dialog":5,"./Form":8,"./FormInput":9,"./Rating":11,"classnames":15,"prop-types":21,"react":28}],7:[function(require,module,exports){
+},{"./Actions":3,"./Dialog":5,"./Form":8,"./FormInput":9,"./Rating":11,"classnames":16,"prop-types":22,"react":29}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -689,7 +689,7 @@ FileSelector.propTypes = {
 // };
 
 exports.default = FileSelector;
-},{"prop-types":21,"react":28}],8:[function(require,module,exports){
+},{"prop-types":22,"react":29}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -807,7 +807,7 @@ Form.propTypes = {
 };
 
 exports.default = Form;
-},{"./FormInput":9,"./Rating":11,"prop-types":21,"react":28}],9:[function(require,module,exports){
+},{"./FormInput":9,"./Rating":11,"prop-types":22,"react":29}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -896,7 +896,7 @@ FormInput.propTypes = {
 };
 
 exports.default = FormInput;
-},{"./Rating":11,"./Suggest":12,"prop-types":21,"react":28}],10:[function(require,module,exports){
+},{"./Rating":11,"./Suggest":12,"prop-types":22,"react":29}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -937,7 +937,7 @@ var Logo = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Logo;
-},{"react":28}],11:[function(require,module,exports){
+},{"react":29}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1076,7 +1076,7 @@ Rating.defaultProps = {
 };
 
 exports.default = Rating;
-},{"classnames":15,"prop-types":21,"react":28}],12:[function(require,module,exports){
+},{"classnames":16,"prop-types":22,"react":29}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1194,7 +1194,7 @@ Suggest.propTypes = {
 };
 
 exports.default = Suggest;
-},{"prop-types":21,"react":28}],13:[function(require,module,exports){
+},{"prop-types":22,"react":29}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1202,6 +1202,166 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.ConvertFromExcelCsv = ConvertFromExcelCsv;
+exports.ConvertToExcelCsv = ConvertToExcelCsv;
+exports.ConvertToCsv = ConvertToCsv;
+exports.Merge = Merge;
+
+function csvToArray(text) {
+    // https://stackoverflow.com/questions/8493195/how-can-i-parse-a-csv-string-with-javascript-which-contains-comma-in-data
+    // https://www.papaparse.com/
+    //RFC 4180
+    // let test = '"one","two With escaped ""g""",    "three, with, commas",four with no quotes,five for fun';
+    //   ConvertFromExcelCsv(test).join(' | ')
+    var ret = [''],
+        i = 0,
+        p = '',
+        s = true;
+    for (var l in text) {
+        l = text[l];
+        if ('"' === l) {
+            s = !s;
+            if ('"' === p) {
+                ret[i] += '"';
+                l = '-';
+            } else if ('' === p) l = '-';
+        } else if (s && ',' === l) l = ret[++i] = '';else ret[i] += l;
+        p = l;
+    }
+    return ret;
+}
+
+function ConvertFromExcelCsv(csv) {
+    var lines = csv.split("\r\n");
+    var result = [];
+    var headers = csvToArray(lines[0]);
+
+    for (var i = 1; i < lines.length; i++) {
+
+        var row = lines[i];
+        if (row.trim() === '') {
+            continue;
+        }
+
+        var obj = {};
+        var cells = csvToArray(row);
+        for (var j = 0; j < headers.length; j++) {
+            if (j < cells.length) {
+                var key = headers[j];
+                obj[key] = cells[j];
+            }
+        }
+        result.push(obj);
+    }
+    return result;
+}
+
+function ConvertToExcelCsv(objArray) {
+    return ConvertToCsv(objArray, '"', ',', '\r\n', true, function (cell) {
+        return cell.replace(/"/g, "\"\"");
+    });
+}
+
+function ConvertToCsv(objArray) {
+    var quote = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var delimit = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ',';
+    var newLine = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '\r\n';
+    var header = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+    var convert = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+
+    var array = (typeof objArray === 'undefined' ? 'undefined' : _typeof(objArray)) != 'object' ? JSON.parse(objArray) : objArray;
+    if (array.length == 0) return '';
+    var str = '';
+    var columnNames = [];
+    var columnNameDict = {};
+
+    for (var hRowIdx = 0; hRowIdx < array.length; hRowIdx++) {
+        var names = [];
+        for (var name in array[hRowIdx]) {
+            names.push(name);
+            columnNameDict[name] = 1;
+        }
+        if (columnNames.length < names.length) {
+            columnNames = names;
+        }
+    }
+
+    if (header) {
+        var headerLine = '';
+        //for (var colNameIdx = 0; colNameIdx < columnNames.length; colNameIdx++) {
+        for (var colName1 in columnNameDict) {
+            if (headerLine != '') headerLine += delimit;
+            //headerLine += quote + columnNames[colNameIdx] + quote;
+            headerLine += quote + colName1 + quote;
+        }
+        str += headerLine + newLine;
+        // eslint-disable-next-line no-console
+        //console.log(str);
+    }
+
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        //for (var index in array[i]) {
+        for (var index in columnNameDict) {
+            if (line != '') line += delimit;
+            var value = typeof array[i][index] !== 'undefined' ? array[i][index] : '';
+            if (convert != null) value = convert(value.toString());
+            line += quote + value + quote;
+        }
+        str += line + newLine;
+    }
+    return str;
+    //   : this.state.data.reduce(function(result, row) {
+    //       return result
+    //         + row.reduce(function(rowresult, cell, idx) {
+    //             return rowresult 
+    //               + '"' 
+    //               + cell.replace(/"/g, '""')
+    //               + '"'
+    //               + (idx < row.length - 1 ? ',' : '');
+    //           }, '')
+    //         + "\n";
+    //     }, '');
+}
+
+function Merge(json1, json2) {
+
+    var dd1 = JSON.parse(JSON.stringify(json1));
+    var dd2 = JSON.parse(JSON.stringify(json2));
+
+    if (Array.isArray(dd1) && Array.isArray(dd2)) {
+        var dd1_not_in_dd2 = [];
+        dd1.map(function (x) {
+            var z = dd2.find(function (y) {
+                var yy = y.name.trim().toLowerCase();
+                var xx = x.name.trim().toLowerCase();
+                var zz = yy == xx;
+                return zz;
+            });
+            //Object.assign(x, z);
+            if (z) Object.assign(x, z);else dd1_not_in_dd2.push(x);
+        });
+
+        dd2.map(function (x) {
+            return Object.assign(x, dd1.find(function (y) {
+                return y.name.trim().toLowerCase() == x.name.trim().toLowerCase();
+            }));
+        });
+        var dd4 = dd2.concat(dd1_not_in_dd2);
+        return dd4;
+    } else {
+        return dd1;
+    }
+}
+
+exports.default = Merge;
+},{}],14:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -1233,6 +1393,8 @@ var _propTypes = require('prop-types');
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _Util = require('./Util');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1245,6 +1407,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // <- the table of all items
 // <- the "add new item" form
 //import React, { Component, PropTypes } from 'react';
+
+//import Merge from './Util';
 
 
 var Whinepad = function (_Component) {
@@ -1264,36 +1428,10 @@ var Whinepad = function (_Component) {
     }
 
     _createClass(Whinepad, [{
-        key: '_convertToCSV',
-        value: function _convertToCSV(objArray) {
-            var array = (typeof objArray === 'undefined' ? 'undefined' : _typeof(objArray)) != 'object' ? JSON.parse(objArray) : objArray;
-            var str = '';
-            for (var i = 0; i < array.length; i++) {
-                var line = '';
-                for (var index in array[i]) {
-                    if (line != '') line += ',';
-                    line += array[i][index];
-                }
-                str += line + '\r\n';
-            }
-            return str;
-        }
-    }, {
         key: '_exportFile',
         value: function _exportFile(format, ev) {
             //var format = 'json';
-            var contents = format === 'json' ? JSON.stringify(this.state.data) : this._convertToCSV(this.state.data);
-            //   : this.state.data.reduce(function(result, row) {
-            //       return result
-            //         + row.reduce(function(rowresult, cell, idx) {
-            //             return rowresult 
-            //               + '"' 
-            //               + cell.replace(/"/g, '""')
-            //               + '"'
-            //               + (idx < row.length - 1 ? ',' : '');
-            //           }, '')
-            //         + "\n";
-            //     }, '');
+            var contents = format === 'json' ? JSON.stringify(this.state.data) : (0, _Util.ConvertToExcelCsv)(this.state.data);
 
             var URL = window.URL || window.webkitURL;
             // eslint-disable-next-line no-console
@@ -1304,222 +1442,12 @@ var Whinepad = function (_Component) {
             ev.target.download = 'data.' + format;
         }
     }, {
-        key: '_exportFileA',
-        value: function _exportFileA(format, e) {
-            // https://reactjs.org/docs/handling-events.html
-            //        e.preventDefault();
-            //alert("In _handleClick. format is " + format);
-
-            var contents = format === 'json' ? JSON.stringify(this.state.data) : this._convertToCSV(this.state.data);
-            var blob = new Blob([contents], { type: 'text/' + format });
-            window.location.href = window.URL.createObjectURL(blob);
-            window.location.download = 'data.' + format;
-        }
-    }, {
-        key: '_merge0',
-        value: function _merge0(json1, json2) {
-            var dd1 = JSON.parse(json1);
-            var dd2 = JSON.parse(json2);
-
-            if (Array.isArray(dd1) && Array.isArray(dd2)) {
-                dd2.map(function (x) {
-                    var z = dd1.find(function (y) {
-                        var yy = y.name.trim().toLowerCase();
-                        var xx = x.name.trim().toLowerCase();
-                        var zz = yy == xx;
-                        return zz;
-                    });
-                    Object.assign(x, z);
-                });
-
-                dd1.map(function (x) {
-                    return Object.assign(x, dd2.find(function (y) {
-                        return y.name.trim().toLowerCase() == x.name.trim().toLowerCase();
-                    }));
-                });
-            }
-            return dd1;
-        }
-    }, {
-        key: '_merge',
-        value: function _merge(json1, json2) {
-            var dd1 = JSON.parse(JSON.stringify(json1));
-            var dd2 = JSON.parse(JSON.stringify(json2));
-
-            if (Array.isArray(dd1) && Array.isArray(dd2)) {
-                var dd1_not_in_dd2 = [];
-                dd1.map(function (x) {
-                    var z = dd2.find(function (y) {
-                        var yy = y.name.trim().toLowerCase();
-                        var xx = x.name.trim().toLowerCase();
-                        var zz = yy == xx;
-                        return zz;
-                    });
-                    //Object.assign(x, z);
-                    if (z) Object.assign(x, z);else dd1_not_in_dd2.push(x);
-                });
-
-                dd2.map(function (x) {
-                    return Object.assign(x, dd1.find(function (y) {
-                        return y.name.trim().toLowerCase() == x.name.trim().toLowerCase();
-                    }));
-                });
-                var dd4 = dd2.concat(dd1_not_in_dd2);
-                return dd4;
-            } else {
-                return dd1;
-            }
-        }
-    }, {
-        key: '_mergeTest1',
-        value: function _mergeTest1() {
-            var json1 = [{ name: "2", test: 0, quit: 'None' }, { name: "1", test: 0, val: 'One' }, { name: "5", test: 0 }, { name: "4", test: 0 }, { name: "3" }];
-            var json2 = [{ name: "3", test: 1 }, { name: "1", test: 'quit', food: 'apple' }, { name: "5", real: 1 }, { name: "6", test: 1 }];
-            var expectMergeResult = [{ name: "3", test: 1 }, { name: "1", test: 'quit', food: 'apple', val: 'One' }, { name: "5", real: 1, test: 0 }, { name: "6", test: 1 }, { name: "2", test: 0, quit: 'None' }, { name: "4", test: 0 }];
-            var json3 = this._merge(json1, json2);
-            // eslint-disable-next-line no-console
-            console.log('json3=' + JSON.stringify(json3, null, 2)); // spacing level
-            // eslint-disable-next-line no-console
-            console.log('Test Result 1 =' + (JSON.stringify(json3) === JSON.stringify(expectMergeResult) ? 'passed' : 'failed'));
-        }
-    }, {
-        key: '_mergeTest2',
-        value: function _mergeTest2() {
-            var json1 = [{
-                "name": "$2.75 burger",
-                "link": "",
-                "year": "2018",
-                "grape": "Merlot",
-                "rating": 2,
-                "comments": "Nice for the price"
-            }, {
-                "name": "Living Room",
-                "link": "https://www.google.com",
-                "year": "2017",
-                "grape": "Chancellor",
-                "rating": 2,
-                "comments": "Cool"
-            }];
-            var json2 = [{
-                "name": " $2.75 Burger ",
-                "year": "2019",
-                "grape": "Merlot",
-                "comments": "Nice for the price"
-            }, {
-                "name": "55 Living Room",
-                "link": "https://www.google.com",
-                "year": "2017",
-                "grape": "Chancellor",
-                "rating": 5,
-                "more": "MORE DATA",
-                "comments": "Cool"
-            }];
-            var expectMergeResult = [{
-                "name": " $2.75 Burger ",
-                "year": "2019",
-                "grape": "Merlot",
-                "comments": "Nice for the price",
-                "link": "",
-                "rating": 2
-            }, {
-                "name": "55 Living Room",
-                "link": "https://www.google.com",
-                "year": "2017",
-                "grape": "Chancellor",
-                "rating": 5,
-                "more": "MORE DATA",
-                "comments": "Cool"
-            }, {
-                "name": "Living Room",
-                "link": "https://www.google.com",
-                "year": "2017",
-                "grape": "Chancellor",
-                "rating": 2,
-                "comments": "Cool"
-            }];
-            var json3 = this._merge(json1, json2);
-            // eslint-disable-next-line no-console
-            console.log('json3=' + JSON.stringify(json3, null, 2)); // spacing level
-            // eslint-disable-next-line no-console
-            console.log('Test Result 2 =' + (JSON.stringify(json3) === JSON.stringify(expectMergeResult) ? 'passed' : 'failed'));
-        }
-    }, {
         key: '_importFile',
-        value: function _importFile(fileText) {
-            //this._mergeTest1();
-            //this._mergeTest2();
+        value: function _importFile(fileText, format) {
             var d1 = this.state.data;
-            var d2 = JSON.parse(fileText);
-            var d3 = this._merge(d1, d2);
+            var d2 = format === 'json' ? JSON.parse(fileText) : (0, _Util.ConvertFromExcelCsv)(fileText);
+            var d3 = (0, _Util.Merge)(d1, d2);
             this.setState({ data: d3 });
-        }
-    }, {
-        key: '_importFileA',
-        value: function _importFileA(fileText) {
-
-            alert("Processing..." + fileText);
-            // eslint-disable-next-line no-console
-            console.log('fileText=' + fileText);
-
-            var dd1 = JSON.parse("[{\"name\": \"55 Living Room\",\"link\": \"https://www.google.com\",\"year\": \"2017\",\"grape\": \"Chancellor\",\"rating\": 5,\"more\": \"MORE DATA\",\"comments\": \"Cool\"},{\"name\": \" $2.75 Burger \",\"year\": \"2019\",\"grape\": \"Merlot\",\"comments\": \"Nice for the price\"}]");
-            var dd2 = JSON.parse("[ { \"name\": \"$2.75 burger\", \"link\": \"\", \"year\": \"2019\", \"grape\": \"Merlot\", \"rating\": 2, \"comments\": \"Nice for the price\" }, { \"name\": \"Living Room\", \"link\": \"https://www.google.com\", \"year\": \"2017\", \"grape\": \"Chancellor\", \"rating\": 2, \"comments\": \"Cool\" } ]");
-
-            if (Array.isArray(dd1) && Array.isArray(dd2)) {
-                dd1.map(function (x) {
-                    var z = dd2.find(function (y) {
-                        var yy = y.name.trim().toLowerCase();
-                        var xx = x.name.trim().toLowerCase();
-                        var zz = yy == xx;
-                        return zz;
-                    });
-                    Object.assign(x, z);
-                });
-                // eslint-disable-next-line no-console
-                console.log('dd1=' + dd1);
-
-                dd2.map(function (x) {
-                    return Object.assign(x, dd1.find(function (y) {
-                        return y.name.trim().toLowerCase() == x.name.trim().toLowerCase();
-                    }));
-                });
-                // eslint-disable-next-line no-console
-                console.log('dd2=' + dd2);
-            }
-
-            var data1 = JSON.parse(fileText);
-            var data2 = JSON.parse(this.state.data);
-
-            if (Array.isArray(data1) && Array.isArray(data2)) {
-                data1.map(function (x) {
-                    return Object.assign(x, data2.find(function (y) {
-                        return y.name.trim().toLowerCase() == x.name.trim().toLowerCase();
-                    }));
-                });
-                // eslint-disable-next-line no-console
-                console.log('data1=' + data1);
-
-                data2.map(function (x) {
-                    return Object.assign(x, data1.find(function (y) {
-                        return y.name.trim().toLowerCase() == x.name.trim().toLowerCase();
-                    }));
-                });
-                // eslint-disable-next-line no-console
-                console.log('data2=' + data2);
-            }
-
-            var json1 = [{ id: 2, test: 0, quit: 'None' }, { id: 1, test: 0, val: 'One' }, { id: 5, test: 0 }, { id: 4, test: 0 }, { id: 3 }];
-
-            var json2 = [{ id: 3, test: 1 }, { id: 1, test: 'quit', food: 'apple' }, { id: 5, real: 1 }];
-
-            if (Array.isArray(json1) && Array.isArray(json2)) {
-                var json3 = json1.map(function (x) {
-                    return Object.assign(x, json2.find(function (y) {
-                        return y.id == x.id;
-                    }));
-                });
-                // eslint-disable-next-line no-console
-                console.log('json3=' + json3);
-            }
         }
     }, {
         key: '_addNewDialog',
@@ -1630,12 +1558,12 @@ var Whinepad = function (_Component) {
                     { className: 'WhinepadToolbar' },
                     _react2.default.createElement(
                         'div',
-                        { className: 'WhinepadToolbarDownload' },
+                        { className: 'WhinepadToolbarImportExport' },
                         _react2.default.createElement(
                             _Button2.default,
                             { href: 'data.json',
                                 onClick: this._exportFile.bind(this, 'json'),
-                                className: 'WhinepadToolbarDownloadButton' },
+                                className: 'WhinepadToolbarExportButton' },
                             'Export Json'
                         ),
                         _react2.default.createElement(
@@ -1644,19 +1572,26 @@ var Whinepad = function (_Component) {
                                 onClick: function onClick(e) {
                                     return _this2._exportFile('csv', e);
                                 },
-                                className: 'WhinepadToolbarDownloadButton' },
+                                className: 'WhinepadToolbarExportButton' },
                             'Export Csv'
                         )
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: 'WhinepadToolbarImport' },
+                        { className: 'WhinepadToolbarImportExport' },
                         _react2.default.createElement(
                             _FileSelector2.default,
                             { onAction: function onAction(f) {
-                                    return _this2._importFile(f);
+                                    return _this2._importFile(f, 'json');
                                 } },
                             'Import Json'
+                        ),
+                        _react2.default.createElement(
+                            _FileSelector2.default,
+                            { onAction: function onAction(f) {
+                                    return _this2._importFile(f, 'csv');
+                                } },
+                            'Import Csv'
                         )
                     )
                 ),
@@ -1684,7 +1619,7 @@ Whinepad.propTypes = {
     initialData: _propTypes2.default.arrayOf(_propTypes2.default.object)
 };
 exports.default = Whinepad;
-},{"./Button":4,"./Dialog":5,"./Excel":6,"./FileSelector":7,"./Form":8,"prop-types":21,"react":28}],14:[function(require,module,exports){
+},{"./Button":4,"./Dialog":5,"./Excel":6,"./FileSelector":7,"./Form":8,"./Util":13,"prop-types":22,"react":29}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1735,7 +1670,7 @@ exports.default = [{
     type: 'text',
     sample: 'Nice for the price'
 }];
-},{"./classification":2}],15:[function(require,module,exports){
+},{"./classification":2}],16:[function(require,module,exports){
 /*!
   Copyright (c) 2017 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -1789,7 +1724,7 @@ exports.default = [{
 	}
 }());
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -1881,7 +1816,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2067,7 +2002,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -2162,7 +2097,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":22,"_process":17}],19:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":23,"_process":18}],20:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2223,7 +2158,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":22}],20:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":23}],21:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -2782,7 +2717,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":18,"./lib/ReactPropTypesSecret":22,"_process":17,"object-assign":16}],21:[function(require,module,exports){
+},{"./checkPropTypes":19,"./lib/ReactPropTypesSecret":23,"_process":18,"object-assign":17}],22:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -2814,7 +2749,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":19,"./factoryWithTypeCheckers":20,"_process":17}],22:[function(require,module,exports){
+},{"./factoryWithThrowingShims":20,"./factoryWithTypeCheckers":21,"_process":18}],23:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2828,7 +2763,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (process){
 /** @license React v16.7.0
  * react-dom.development.js
@@ -22917,7 +22852,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":17,"object-assign":16,"prop-types/checkPropTypes":18,"react":28,"scheduler":33,"scheduler/tracing":34}],24:[function(require,module,exports){
+},{"_process":18,"object-assign":17,"prop-types/checkPropTypes":19,"react":29,"scheduler":34,"scheduler/tracing":35}],25:[function(require,module,exports){
 /** @license React v16.7.0
  * react-dom.production.min.js
  *
@@ -23168,7 +23103,7 @@ void 0:t("40");return a._reactRootContainer?(Uh(function(){fi(null,null,a,!1,fun
 Ka,La,Ca.injectEventPluginsByName,qa,Ra,function(a){za(a,Qa)},Ib,Jb,Jd,Ea]}};function hi(a,b){di(a)?void 0:t("299","unstable_createRoot");return new ci(a,!0,null!=b&&!0===b.hydrate)}(function(a){var b=a.findFiberByHostInstance;return We(n({},a,{overrideProps:null,findHostInstanceByFiber:function(a){a=nd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ia,bundleType:0,version:"16.7.0",rendererPackageName:"react-dom"});
 var li={default:ki},mi=li&&ki||li;module.exports=mi.default||mi;
 
-},{"object-assign":16,"react":28,"scheduler":33}],25:[function(require,module,exports){
+},{"object-assign":17,"react":29,"scheduler":34}],26:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -23210,7 +23145,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":23,"./cjs/react-dom.production.min.js":24,"_process":17}],26:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":24,"./cjs/react-dom.production.min.js":25,"_process":18}],27:[function(require,module,exports){
 (function (process){
 /** @license React v16.7.0
  * react.development.js
@@ -25097,7 +25032,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":17,"object-assign":16,"prop-types/checkPropTypes":18}],27:[function(require,module,exports){
+},{"_process":18,"object-assign":17,"prop-types/checkPropTypes":19}],28:[function(require,module,exports){
 /** @license React v16.7.0
  * react.production.min.js
  *
@@ -25123,7 +25058,7 @@ _currentValue:a,_currentValue2:a,_threadCount:0,Provider:null,Consumer:null};a.P
 if(null!=b){void 0!==b.ref&&(h=b.ref,f=K.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)L.call(b,c)&&!M.hasOwnProperty(c)&&(d[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)d.children=e;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];d.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:d,_owner:f}},createFactory:function(a){var b=N.bind(null,a);b.type=a;return b},isValidElement:O,version:"16.7.0",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:K,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":16}],28:[function(require,module,exports){
+},{"object-assign":17}],29:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25134,7 +25069,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":26,"./cjs/react.production.min.js":27,"_process":17}],29:[function(require,module,exports){
+},{"./cjs/react.development.js":27,"./cjs/react.production.min.js":28,"_process":18}],30:[function(require,module,exports){
 (function (process){
 /** @license React v0.12.0
  * scheduler-tracing.development.js
@@ -25561,7 +25496,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":17}],30:[function(require,module,exports){
+},{"_process":18}],31:[function(require,module,exports){
 /** @license React v0.12.0
  * scheduler-tracing.production.min.js
  *
@@ -25573,7 +25508,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.12.0
  * scheduler.development.js
@@ -26280,7 +26215,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":17}],32:[function(require,module,exports){
+},{"_process":18}],33:[function(require,module,exports){
 (function (global){
 /** @license React v0.12.0
  * scheduler.production.min.js
@@ -26305,7 +26240,7 @@ b=d.previous;b.next=d.previous=a;a.next=d;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!f&&(null!==c&&c.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==c&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return c};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26316,7 +26251,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":31,"./cjs/scheduler.production.min.js":32,"_process":17}],34:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":32,"./cjs/scheduler.production.min.js":33,"_process":18}],35:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -26327,4 +26262,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":29,"./cjs/scheduler-tracing.production.min.js":30,"_process":17}]},{},[1]);
+},{"./cjs/scheduler-tracing.development.js":30,"./cjs/scheduler-tracing.production.min.js":31,"_process":18}]},{},[1]);
