@@ -41,7 +41,11 @@ class Suggest extends Component {
                     onChange={e => this.setState({ value: e.target.value })}
                     id={this.props.id} />
                 <datalist id={randomid}>
-                    {this.props.options.map((item, idx) => <option value={item} key={idx} />)}
+                    {
+                        this.props.options.map(
+                            (item, idx) => <option value={item} key={idx} />
+                        )
+                    }
                 </datalist>
             </div>
         );

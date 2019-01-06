@@ -25,6 +25,10 @@ class FormInput extends Component {
                         type="number"
                         defaultValue={this.props.defaultValue || new Date().getFullYear()} />
                 );
+            case 'file':
+                return (
+                    <input {...common} type="file" />
+                );
             case 'suggest':
                 return <Suggest {...common} options={this.props.options} />;
             case 'rating':
@@ -42,7 +46,7 @@ class FormInput extends Component {
 }
 
 FormInput.propTypes = {
-    type: PropTypes.oneOf(['year', 'suggest', 'rating', 'text', 'input']),
+    type: PropTypes.oneOf(['year', 'suggest', 'rating', 'text', 'input', 'file']),
     id: PropTypes.string,
     options: PropTypes.array, // as in auto-complete <option>s
     defaultValue: PropTypes.any,

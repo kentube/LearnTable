@@ -10,12 +10,16 @@
   .Whinepad .WhinepadToolbarSearch {
     float: right;
   }
-  
+
+  .Whinepad .WhinepadToolbarImportExport {
+    display: block;
+  }
+
   .Whinepad .WhinepadToolbarAddButton {
     font-size: 32px;
   }
   
-  .Whinepad .WhinepadToolbarDownloadButton {
+  .Whinepad .WhinepadToolbarExportButton {
     font-size: 16px;
   }
 

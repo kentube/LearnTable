@@ -147,7 +147,13 @@
   .Excel .ExcelDataRight {
     text-align: right;
   }
-  .Form .FormLabel {
+  .FileSelector {
+  display: inline;
+}
+
+.FileSelector .FileSelectorButton {
+  font-size: 16px;
+}.Form .FormLabel {
     color: rgb(207, 8, 8);
     display: block;
     font-size: 12px;
@@ -208,12 +214,16 @@
   .Whinepad .WhinepadToolbarSearch {
     float: right;
   }
-  
+
+  .Whinepad .WhinepadToolbarImportExport {
+    display: block;
+  }
+
   .Whinepad .WhinepadToolbarAddButton {
     font-size: 32px;
   }
   
-  .Whinepad .WhinepadToolbarDownloadButton {
+  .Whinepad .WhinepadToolbarExportButton {
     font-size: 16px;
   }
 

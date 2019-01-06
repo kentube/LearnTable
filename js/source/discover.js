@@ -1,5 +1,6 @@
 'use strict';
 
+import FileSelector from './components/FileSelector';
 import Dialog from './components/Dialog';
 import Actions from './components/Actions';
 import Form from './components/Form';
@@ -40,6 +41,7 @@ ReactDOM.render(
             <tr><td>Rating</td>          <td><FormInput type="rating" defaultValue={4} /></td></tr>
             <tr><td>Suggest</td>         <td><FormInput type="suggest" options={['red', 'green', 'blue']} defaultValue="green" /></td></tr>
             <tr><td>Vanilla textarea</td><td><FormInput type="text" /></td></tr>
+            <tr><td>File Input</td>      <td><FormInput type="file" /></td></tr>
         </tbody></table>
 
         <h2>Form</h2>
@@ -49,6 +51,10 @@ ReactDOM.render(
                 { label: 'Greetings', id: 'freetext' },
             ]}
             initialData={{ rateme: 4, freetext: 'Hello' }} />
+
+        <h2>File Selector</h2>
+        
+        <div><FileSelector onAction={(f)=>alert("Processing..." + f)} /></div>
 
         <h2>Actions</h2>
         <div><Actions onAction={type => alert(type)} /></div>

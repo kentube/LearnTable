@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Table Editor 1.0.0</title>
+    <title>Table Editor 1.0.2</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="bundle.css">
   </head>
-  <body>
+  <body onload="myFunction()">
     <div id="pad"></div>
     <script src="bundle.js"></script>
+
+    <div id="debug" style="font-size:16px; display: none;"></div>
+    <button onclick="myFunction()" style="display: none" >Click me</button>
+    <script>
+      function myFunction() {
+        let testMessage = 'Hello me!';
+        document.getElementById("debug").innerHTML = testMessage + " at " + Date() + "<br />";
+        // alert("Go");
+        // console.log(CSVtoArray(test));
+      }
+    </script>
   </body>
 </html>
 

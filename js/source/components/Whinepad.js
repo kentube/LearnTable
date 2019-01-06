@@ -1,3 +1,4 @@
+import FileSelector from './FileSelector'; // <- for the "add new item"
 import Button from './Button'; // <- for the "add new item"
 import Dialog from './Dialog'; // <- to pop the "add new item" form
 import Excel from './Excel'; // <- the table of all items
@@ -5,6 +6,8 @@ import Form from './Form'; // <- the "add new item" form
 //import React, { Component, PropTypes } from 'react';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+//import Merge from './Util';
+import {Merge, ConvertToExcelCsv, ConvertFromExcelCsv} from './Util';
 
 class Whinepad extends Component {
     constructor(props) {
@@ -16,37 +19,12 @@ class Whinepad extends Component {
         this._preSearchData = null;
     }
     
-    _convertToCSV(objArray) {
-        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-        var str = '';
-        for (var i = 0; i < array.length; i++) {
-            var line = '';
-            for (var index in array[i]) {
-                if (line != '') line += ','
-                line += array[i][index];
-            }
-            str += line + '\r\n';
-        }
-        return str;
-    }
-
-    _download(format, ev) {
+    _exportFile(format, ev) {
         //var format = 'json';
-        var contents = format === 'json' 
+        var contents = format === 'json'
           ? JSON.stringify(this.state.data)
-          : this._convertToCSV(this.state.data);
-        //   : this.state.data.reduce(function(result, row) {
-        //       return result
-        //         + row.reduce(function(rowresult, cell, idx) {
-        //             return rowresult 
-        //               + '"' 
-        //               + cell.replace(/"/g, '""')
-        //               + '"'
-        //               + (idx < row.length - 1 ? ',' : '');
-        //           }, '')
-        //         + "\n";
-        //     }, '');
-        
+          : ConvertToExcelCsv(this.state.data);
+
         var URL = window.URL || window.webkitURL;
         // eslint-disable-next-line no-console
         // console.log('contents='+ contents);
@@ -54,6 +32,15 @@ class Whinepad extends Component {
         var blob = new Blob([contents], {type: 'text/' + format});
         ev.target.href = URL.createObjectURL(blob);
         ev.target.download = 'data.' + format;
+    }
+
+    _importFile(fileText, format) {
+        var d1 = this.state.data;
+        var d2 = format === 'json'
+            ? JSON.parse(fileText)
+            : ConvertFromExcelCsv(fileText);
+        var d3 = Merge(d1, d2);
+        this.setState({data: d3});
     }
 
     _addNewDialog() {
@@ -117,15 +104,6 @@ class Whinepad extends Component {
                             + add
                         </Button>
                     </div>                    
-                    <div className="WhinepadToolbarDownload">
-                        <Button
-                            onClick={this._download.bind(this, 'json')}
-                            className="WhinepadToolbarDownloadButton">
-                            Export
-                        </Button>
-                        <a onClick={this._download.bind(this, 'json')} href="data.json"> Export JSON</a>
-                        <a onClick={this._download.bind(this, 'csv')} href="data.csv"> Export CSV</a>
-                    </div>
                     <div className="WhinepadToolbarSearch">
                         <input
                             placeholder="Search..."
@@ -139,6 +117,22 @@ class Whinepad extends Component {
                         schema={this.props.schema}
                         initialData={this.state.data}
                         onDataChange={this._onExcelDataChange.bind(this)} />
+                </div>
+                <div className="WhinepadToolbar">
+                    <div className="WhinepadToolbarImportExport">
+                        <Button href="data.json"
+                            onClick={this._exportFile.bind(this, 'json')} 
+                            className="WhinepadToolbarExportButton">Export Json</Button>
+                        <Button href="data.csv"
+                            onClick={(e) => this._exportFile('csv', e) }
+                            className="WhinepadToolbarExportButton">Export Csv</Button>
+                        {/* <a onClick={this._exportFile.bind(this, 'json')} href="data.json"> Export JSON</a> */}
+                        {/* <a onClick={this._exportFile.bind(this, 'csv')} href="data.csv"> Export CSV</a> */}
+                    </div>
+                    <div className="WhinepadToolbarImportExport">
+                        <FileSelector onAction={(f)=>this._importFile(f, 'json')}>Import Json</FileSelector>
+                        <FileSelector onAction={(f)=>this._importFile(f, 'csv')}>Import Csv</FileSelector>
+                    </div>
                 </div>
                 {this.state.addnew
                     ? <Dialog
