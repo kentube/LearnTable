@@ -7,7 +7,8 @@ import Form from './Form'; // <- the "add new item" form
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 //import Merge from './Util';
-import {Merge, ConvertToExcelCsv, ConvertFromExcelCsv} from './Util';
+import {Merge, ConvertToExcelCsv, ConvertFromExcelCsv} from '../util/Util';
+import * as Crypto from '../util/Crypto';
 
 class Whinepad extends Component {
     constructor(props) {
@@ -75,6 +76,14 @@ class Whinepad extends Component {
         });
     }
     _search(e) {
+
+        // let password = "this is 1st THE P8zzMord!"
+        // let plaintext = e.target.value;
+        // Crypto.Encrypt(password, plaintext).then(function(ee){
+        //     // eslint-disable-next-line no-console
+        //     console.log(ee);
+        //   });        
+
         const needle = e.target.value.toLowerCase();
         if (!needle) {
             this.setState({ data: this._preSearchData });
@@ -130,8 +139,8 @@ class Whinepad extends Component {
                         {/* <a onClick={this._exportFile.bind(this, 'csv')} href="data.csv"> Export CSV</a> */}
                     </div>
                     <div className="WhinepadToolbarImportExport">
-                        <FileSelector onAction={(f)=>this._importFile(f, 'json')}>Import Json</FileSelector>
-                        <FileSelector onAction={(f)=>this._importFile(f, 'csv')}>Import Csv</FileSelector>
+                        <FileSelector onAction0={(f)=>this._importFile(f, 'json')}>Import Json</FileSelector>
+                        <FileSelector onAction0={(f)=>this._importFile(f, 'csv')}>Import Csv</FileSelector>
                     </div>
                 </div>
                 {this.state.addnew

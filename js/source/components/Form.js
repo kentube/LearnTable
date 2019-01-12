@@ -29,6 +29,9 @@ class Form extends Component {
                 if (!prefilled) {
                     return null;
                 }
+                if (field.type === 'password') {
+                    return null;
+                }
                 return (
                     <div className="FormRow" key={field.id}>
                         <span className="FormLabel">{field.label}:</span>
