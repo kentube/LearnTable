@@ -16,8 +16,8 @@
 *TODO* :
 1. ~~Export as json/csv~~
 2. ~~Add column~~
-3. Export:Json/Csv, Import/Merge:Json/Excel
-4. Encrpt/Decrpt
+3. ~~Export:Json/Csv, Import/Merge:Json/Excel~~
+4. ~~Encrpt/Decrpt~~
 5. Server hosting
 6. more...
 

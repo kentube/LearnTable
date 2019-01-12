@@ -1,5 +1,6 @@
 'use strict';
 
+import Password from './components/Password';
 import FileSelector from './components/FileSelector';
 import Dialog from './components/Dialog';
 import Actions from './components/Actions';
@@ -23,6 +24,10 @@ ReactDOM.render(
         <div>Button with onClick: <Button onClick={() => alert('ouch')}>Click me</Button></div>
         <div>A link: <Button href="http://reactjs.com">Follow me</Button></div>
         <div>Custom class name: <Button className="custom">I do nothing</Button></div>
+
+        <h2>Password</h2>
+        <div><Password mode='encrypt' /></div>
+        <div><Password mode='decrypt' defaultValue='U2FsdGVkX19guu+rpSVb60BNiN1K3ShZ23rSSzVy682m6w3VKExtL/fYT0iBI1AA' /></div>
 
         <h2>Suggest</h2>
         <div><Suggest options={['eenie', 'meenie', 'miney', 'mo']} /></div>

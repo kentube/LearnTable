@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Game Ticket",
+        "link": "",
+        "username": "counter@abc.com",
+        "password": "U2FsdGVkX19TBmQ+S5VKS/bNuiQJHTB9NMWOK+SpGovvsFs0K09UDE/xmE70ec0X",
+        "year": "2019",
+        "grape": "Riesling",
+        "rating": 4,
+        "comments": ""
+    },
+    {
+        "name": "$2.75 burger",
+        "link": "",
+        "username": "discount@macdonnald.com",
+        "password": "buy one get one free",
+        "year": "2019",
+        "grape": "Merlot",
+        "rating": 2,
+        "comments": "Nice for the price"
+    },
+    {
+        "name": "Living Room",
+        "link": "https://www.google.com",
+        "username": "",
+        "password": "U2FsdGVkX19ZzYTqvHixO+V3ZNjgOalz9pwnIVuw83U=",
+        "year": "2017",
+        "grape": "Chancellor",
+        "rating": 2,
+        "comments": "Cool"
+    }
+]

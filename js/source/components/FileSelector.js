@@ -22,21 +22,16 @@ class FileSelector extends React.Component
       // eslint-disable-next-line no-cond-assign
       for (var i = 0, f; f = files4[i]; i++) {
         var fileResult = 'No value';
-        var reader = new FileReader();  
+        var reader = new FileReader();
         // Closure to capture the file information.
-        reader.onload = (function(theFile, onAction) {
+        reader.onload = (function(theFile, onAction1) {
           return function(e) {
             fileResult = e.target.result;
-            // eslint-disable-next-line no-console
-            // console.log("fileResult is " + fileResult);
-
-onAction.bind(this, fileResult)();
-
+            onAction1.bind(this, fileResult)();
           };
-        })(f, this.props.onAction);
+        })(f, this.props.onAction0);
         reader.readAsText(f);
       }
-
     }
 
     render ()
@@ -58,9 +53,9 @@ onAction.bind(this, fileResult)();
     }
 }
 
-FileSelector.propTypes = {
-  onAction: PropTypes.func.isRequired,
-};
+// FileSelector.propTypes = {
+//   onAction: PropTypes.func.isRequired,
+// };
 
 // FileSelector.defaultProps = {
 //   onAction: () => { },

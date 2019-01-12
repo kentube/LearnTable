@@ -94,7 +94,7 @@ export function ConvertToCsv(objArray, quote = '', delimit = ',', newLine = '\r\
             if (line != '') line += delimit;
             var value = typeof (array[i][index]) !== 'undefined' ? array[i][index] : '';
             if (convert != null)
-                value = convert(value.toString());
+                value = convert(value==null?'':value.toString());
             line += quote + value + quote;
         }
         str += line + newLine;

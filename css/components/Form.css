@@ -9,3 +9,7 @@
     padding-left: 20px;
     text-align: left;
   }
+
+  .Form .FormTextArea {
+    width: 78%;
+  }
