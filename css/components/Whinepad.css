@@ -16,7 +16,11 @@
   }
 
   .Whinepad .WhinepadToolbarAddButton {
-    font-size: 32px;
+    font-size: 24px;
+  }
+
+  .Whinepad .WhinepadToolbarDelButton {
+    font-size: 24px;
   }
   
   .Whinepad .WhinepadToolbarExportButton {

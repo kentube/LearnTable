@@ -1,10 +1,13 @@
 # Learn to build Table using React.JS
 
-*Run*   : index.html
+*Run with server* : node server.js
+                    (http://localhost:3939)
 
-*Build* : .\scripts\build.cmd
+*Run Standalone*  : index.html
 
-*Deploy* : TODO (index.html, bundle.*, images\\\*)
+*Build*  : .\scripts\build.cmd
+
+*Deploy* : TODO (index.html, bundle.*, images\\\*, app.js)
 
 *Source* : [GitHub - LearnTable](https://github.com/kentube/LearnTable.git)
 
@@ -13,7 +16,7 @@
 2. vscode
 3. git
 
-*TODO* :
+*Features* :
 1. ~~Export as json/csv~~
 2. ~~Add column~~
 3. ~~Export:Json/Csv, Import/Merge:Json/Excel~~
