@@ -25,12 +25,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var data = JSON.parse(localStorage.getItem('data'));
 // default example data, read from the schema
-if (!data) {
-  data = {};
+if (!data || Object.keys(data).length === 0) {
+  var row = {};
   _schema2.default.forEach(function (item) {
-    return data[item.id] = item.sample;
+    return row[item.id] = item.sample;
   });
-  data = [data];
+  data = [row];
 }
 
 _reactDom2.default.render(_react2.default.createElement(
@@ -1429,23 +1429,77 @@ var Whinepad = function (_Component) {
 
         _this.state = {
             data: props.initialData,
-            addnew: false
+            addnew: false,
+            deleteAll: false
         };
         _this._preSearchData = null;
         return _this;
     }
 
     _createClass(Whinepad, [{
-        key: '_exportFile',
-        value: function _exportFile(format, ev) {
-            //var format = 'json';
+        key: '_uploadToServer',
+        value: function _uploadToServer(format, ev) {
+            ev.preventDefault();
+
             var contents = format === 'json' ? JSON.stringify(this.state.data) : (0, _Util.ConvertToExcelCsv)(this.state.data);
 
-            var URL = window.URL || window.webkitURL;
-            // eslint-disable-next-line no-console
-            // console.log('contents='+ contents);
-
             var blob = new Blob([contents], { type: 'text/' + format });
+            // const data = new FormData();
+            // data.append('file', contents);
+            // data.append('filename', 'data.' + format);
+
+            var url = window.location.href;
+            // eslint-disable-next-line no-console
+            console.log('url is ' + url);
+
+            fetch(url + 'learntable.csv', {
+                method: 'POST',
+                body: blob
+            }).then(function (response) {
+                return response.json();
+            } // if the response is a JSON object
+            // eslint-disable-next-line no-console
+            ).then(function (success) {
+                return console.log(success);
+            } // Handle the success response object
+            // eslint-disable-next-line no-console
+            ).catch(function (error) {
+                return console.log(error);
+            } // Handle the error response object
+            );
+        }
+    }, {
+        key: '_mergeFromServer',
+        value: function _mergeFromServer(format, ev) {
+            ev.preventDefault();
+
+            var url = window.location.href;
+            // eslint-disable-next-line no-console
+            console.log('url is ' + url);
+
+            var that = this;
+
+            fetch(url + 'learntable.csv').then(function (resp) {
+                var text = resp.text();
+                return text;
+            }).then(function (fileText) {
+                var d2 = format === 'json' ? JSON.parse(fileText) : (0, _Util.ConvertFromExcelCsv)(fileText);
+                var d1 = that.state.data;
+                if (d1 == null || Object.keys(d1).length === 0) {
+                    that.setState({ data: d2 });
+                } else {
+                    var d3 = (0, _Util.Merge)(d1, d2);
+                    that.setState({ data: d3 });
+                }
+            });
+        }
+    }, {
+        key: '_exportFile',
+        value: function _exportFile(format, ev) {
+            var contents = format === 'json' ? JSON.stringify(this.state.data) : (0, _Util.ConvertToExcelCsv)(this.state.data);
+            var blob = new Blob([contents], { type: 'text/' + format });
+
+            var URL = window.URL || window.webkitURL;
             ev.target.href = URL.createObjectURL(blob);
             ev.target.download = 'data.' + format;
         }
@@ -1478,6 +1532,25 @@ var Whinepad = function (_Component) {
             this._commitToStorage(data);
         }
     }, {
+        key: '_deleteAllDialog',
+        value: function _deleteAllDialog() {
+            this.setState({ deleteAll: true });
+        }
+    }, {
+        key: '_deleteAll',
+        value: function _deleteAll(action) {
+            if (action === 'dismiss') {
+                this.setState({ deleteAll: false });
+                return;
+            }
+            var data = {};
+            this.setState({
+                deleteAll: false,
+                data: data
+            });
+            this._commitToStorage(data);
+        }
+    }, {
         key: '_onExcelDataChange',
         value: function _onExcelDataChange(data) {
             this.setState({ data: data });
@@ -1486,7 +1559,7 @@ var Whinepad = function (_Component) {
     }, {
         key: '_commitToStorage',
         value: function _commitToStorage(data) {
-            localStorage.setItem('data', JSON.stringify(data));
+            if (data == null || Object.keys(data).length === 0) localStorage.clear();else localStorage.setItem('data', JSON.stringify(data));
         }
     }, {
         key: '_startSearching',
@@ -1548,7 +1621,14 @@ var Whinepad = function (_Component) {
                             {
                                 onClick: this._addNewDialog.bind(this),
                                 className: 'WhinepadToolbarAddButton' },
-                            '+ add'
+                            '+ Add'
+                        ),
+                        _react2.default.createElement(
+                            _Button2.default,
+                            {
+                                onClick: this._deleteAllDialog.bind(this),
+                                className: 'WhinepadToolbarDelButton' },
+                            '- Delete all'
                         )
                     ),
                     _react2.default.createElement(
@@ -1590,6 +1670,15 @@ var Whinepad = function (_Component) {
                                 },
                                 className: 'WhinepadToolbarExportButton' },
                             'Export Csv'
+                        ),
+                        _react2.default.createElement(
+                            _Button2.default,
+                            { href: 'data.csv',
+                                onClick: function onClick(e) {
+                                    return _this2._uploadToServer('csv', e);
+                                },
+                                className: 'WhinepadToolbarExportButton' },
+                            'Save to Server'
                         )
                     ),
                     _react2.default.createElement(
@@ -1608,6 +1697,15 @@ var Whinepad = function (_Component) {
                                     return _this2._importFile(f, 'csv');
                                 } },
                             'Import Csv'
+                        ),
+                        _react2.default.createElement(
+                            _Button2.default,
+                            { href: 'server.csv',
+                                onClick: function onClick(e) {
+                                    return _this2._mergeFromServer('csv', e);
+                                },
+                                className: 'WhinepadToolbarExportButton' },
+                            'Load from Server'
                         )
                     )
                 ),
@@ -1622,6 +1720,17 @@ var Whinepad = function (_Component) {
                     _react2.default.createElement(_Form2.default, {
                         ref: 'form',
                         fields: this.props.schema })
+                ) : null,
+                this.state.deleteAll ? _react2.default.createElement(
+                    _Dialog2.default,
+                    {
+                        modal: true,
+                        header: 'Delete all items',
+                        hasCancel: true,
+                        confirmLabel: 'Delete ALL',
+                        onAction: this._deleteAll.bind(this)
+                    },
+                    'Are you sure to delete All items?'
                 ) : null
             );
         }

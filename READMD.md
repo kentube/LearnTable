@@ -1,24 +1,31 @@
 # Learn to build Table using React.JS
 
-*Run*   : index.html
+*Run with server* : node server.js
+                    (http://localhost:3939)
 
-*Build* : .\scripts\build.cmd
+*Run Standalone*  : index.html
 
-*Deploy* : TODO (index.html, bundle.*, images\\\*)
+*Build*   : .\scripts\build.cmd
+
+*Deploy*  : .\scripts\deploy.cmd
+            start "ReleaseTable" /d ..\ReleaseTable node server.js
+
+*Hosting* : https://releasetable.herokuapp.com/
 
 *Source* : [GitHub - LearnTable](https://github.com/kentube/LearnTable.git)
+           [GitHub - ReleaseTable](https://github.com/kentube/ReleaseTable.git)
 
 *Tools* : 
 1. nodejs ("npm install")
 2. vscode
 3. git
 
-*TODO* :
+*Features* :
 1. ~~Export as json/csv~~
 2. ~~Add column~~
 3. ~~Export:Json/Csv, Import/Merge:Json/Excel~~
 4. ~~Encrpt/Decrpt~~
-5. Server hosting
-6. more...
+5. ~~Server hosting~~
+6. Device Version
 
 > Blockquotes

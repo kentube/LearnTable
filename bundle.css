@@ -171,7 +171,7 @@
   background: gold
 }
 .Logo {
-  background-image: url('images/winepad-logo.png');
+  background-image: url('images/desk_2.png');
   background-size: cover;
   display: inline-block;
   height: 60px;
@@ -264,7 +264,11 @@
   }
 
   .Whinepad .WhinepadToolbarAddButton {
-    font-size: 32px;
+    font-size: 24px;
+  }
+
+  .Whinepad .WhinepadToolbarDelButton {
+    font-size: 24px;
   }
   
   .Whinepad .WhinepadToolbarExportButton {

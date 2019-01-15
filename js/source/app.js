@@ -8,10 +8,10 @@ import schema from './schema';
 
 let data = JSON.parse(localStorage.getItem('data'));
 // default example data, read from the schema
-if (!data) {
-  data = {};
-  schema.forEach(item => data[item.id] = item.sample);
-  data = [data];
+if (!data || Object.keys(data).length === 0) {
+  let row = {};
+  schema.forEach(item => row[item.id] = item.sample);
+  data = [row];
 }
 
 ReactDOM.render(

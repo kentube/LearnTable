@@ -16,25 +16,73 @@ class Whinepad extends Component {
         this.state = {
             data: props.initialData,
             addnew: false,
+            deleteAll: false,
         };
         this._preSearchData = null;
-    }
-    
-    _exportFile(format, ev) {
-        //var format = 'json';
-        var contents = format === 'json'
+    }    
+    _uploadToServer(format, ev) {
+        ev.preventDefault();
+
+        let contents = format === 'json'
           ? JSON.stringify(this.state.data)
           : ConvertToExcelCsv(this.state.data);
 
-        var URL = window.URL || window.webkitURL;
+        let blob = new Blob([contents], {type: 'text/' + format});
+        // const data = new FormData();
+        // data.append('file', contents);
+        // data.append('filename', 'data.' + format);
+    
+        let url = window.location.href;
         // eslint-disable-next-line no-console
-        // console.log('contents='+ contents);
+        console.log('url is ' + url);
+        
+        fetch(url + 'learntable.csv', {
+          method: 'POST',
+          body: blob,
+        }).then(response => response.json() // if the response is a JSON object
+        // eslint-disable-next-line no-console
+        ).then(success => console.log(success) // Handle the success response object
+        // eslint-disable-next-line no-console
+        ).catch(error => console.log(error) // Handle the error response object
+        );
+    }
+    _mergeFromServer(format, ev) {
+        ev.preventDefault();
 
-        var blob = new Blob([contents], {type: 'text/' + format});
+        let url = window.location.href;
+        // eslint-disable-next-line no-console
+        console.log('url is ' + url);
+
+        let that = this;
+        
+        fetch(url + 'learntable.csv')
+        .then(function(resp) {
+            let text = resp.text();
+            return text;
+        })
+        .then(function(fileText) {
+            let d2 = format === 'json'
+                ? JSON.parse(fileText)
+                : ConvertFromExcelCsv(fileText);
+            let d1 = that.state.data;
+            if (d1 == null || Object.keys(d1).length === 0) {
+                that.setState({data: d2});
+            } else {
+                let d3 = Merge(d1, d2);
+                that.setState({data: d3});
+            }
+        });
+    }
+    _exportFile(format, ev) {
+        let contents = format === 'json'
+          ? JSON.stringify(this.state.data)
+          : ConvertToExcelCsv(this.state.data);
+        let blob = new Blob([contents], {type: 'text/' + format});
+
+        let URL = window.URL || window.webkitURL;
         ev.target.href = URL.createObjectURL(blob);
         ev.target.download = 'data.' + format;
     }
-
     _importFile(fileText, format) {
         var d1 = this.state.data;
         var d2 = format === 'json'
@@ -43,7 +91,6 @@ class Whinepad extends Component {
         var d3 = Merge(d1, d2);
         this.setState({data: d3});
     }
-
     _addNewDialog() {
         this.setState({ addnew: true });
     }
@@ -60,12 +107,30 @@ class Whinepad extends Component {
         });
         this._commitToStorage(data);
     }
+    _deleteAllDialog() {
+        this.setState({ deleteAll: true });
+    }
+    _deleteAll(action) {
+        if (action === 'dismiss') {
+            this.setState({ deleteAll: false });
+            return;
+        }
+        let data = {};
+        this.setState({
+            deleteAll: false,
+            data: data,
+        });
+        this._commitToStorage(data);
+    }
     _onExcelDataChange(data) {
         this.setState({ data: data });
         this._commitToStorage(data);
     }
     _commitToStorage(data) {
-        localStorage.setItem('data', JSON.stringify(data));
+        if (data == null || Object.keys(data).length === 0)
+            localStorage.clear();
+        else
+            localStorage.setItem('data', JSON.stringify(data));
     }
     _startSearching() {
         this._preSearchData = this.state.data;
@@ -110,7 +175,12 @@ class Whinepad extends Component {
                         <Button
                             onClick={this._addNewDialog.bind(this)}
                             className="WhinepadToolbarAddButton">
-                            + add
+                            + Add
+                        </Button>
+                        <Button
+                            onClick={this._deleteAllDialog.bind(this)}
+                            className="WhinepadToolbarDelButton">
+                            - Delete all
                         </Button>
                     </div>                    
                     <div className="WhinepadToolbarSearch">
@@ -135,12 +205,16 @@ class Whinepad extends Component {
                         <Button href="data.csv"
                             onClick={(e) => this._exportFile('csv', e) }
                             className="WhinepadToolbarExportButton">Export Csv</Button>
-                        {/* <a onClick={this._exportFile.bind(this, 'json')} href="data.json"> Export JSON</a> */}
-                        {/* <a onClick={this._exportFile.bind(this, 'csv')} href="data.csv"> Export CSV</a> */}
+                        <Button href="data.csv"
+                            onClick={(e) => this._uploadToServer('csv', e) }
+                            className="WhinepadToolbarExportButton">Save to Server</Button>
                     </div>
                     <div className="WhinepadToolbarImportExport">
                         <FileSelector onAction0={(f)=>this._importFile(f, 'json')}>Import Json</FileSelector>
                         <FileSelector onAction0={(f)=>this._importFile(f, 'csv')}>Import Csv</FileSelector>
+                        <Button href="server.csv"
+                            onClick={(e) => this._mergeFromServer('csv', e) }
+                            className="WhinepadToolbarExportButton">Load from Server</Button>
                     </div>
                 </div>
                 {this.state.addnew
@@ -155,6 +229,17 @@ class Whinepad extends Component {
                             fields={this.props.schema} />
                     </Dialog>
                     : null}
+                 {this.state.deleteAll
+                     ? <Dialog
+                         modal={true}
+                         header="Delete all items"
+                         hasCancel={true}
+                         confirmLabel="Delete ALL"
+                         onAction={this._deleteAll.bind(this)}
+                         >
+                         Are you sure to delete All items?
+                     </Dialog>
+                     : null}
             </div>
         );
     }
