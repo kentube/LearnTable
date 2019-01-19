@@ -1,16 +1,22 @@
 .Excel input {
     font: 16px Arial;
+    /* font-size:10vw; */
   }
   
   .Excel td {
     background-color: #ffffff;
     padding: 5px;
+    /* font-size: 1.4vw; */
   }
-  
+  /* .Excel .ExceltdMobile {
+    font-size: 14vw;
+  } */
+
   .Excel th {
     color: #e01e1e;
     cursor: pointer;
     font-size: 13px;
+    /* font-size: 1.7vw; */
     font-weight: normal;
     padding: 5px;
     text-align: center;
@@ -35,6 +41,16 @@
   .Excel .ExcelDataCenter {
     text-align: center;
   }
+  /* @media screen and (min-width: 501px) {
+    .Excel .ExcelDataCenter {
+      font-size: 8.25vw;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .Excel .ExcelDataCenter {
+      font-size: 6.1vw;
+    }
+  } */
   
   .Excel .ExcelDataLeft {
     padding: 0 10px;

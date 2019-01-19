@@ -1,3 +1,4 @@
+import ActionCompact from './ActionCompact';
 import Actions from './Actions';
 import Dialog from './Dialog';
 import Form from './Form';
@@ -151,7 +152,8 @@ class Excel extends Component {
                 <thead>
                     <tr>{
                         this.props.schema.map(item => {
-                            if (!item.show) {
+                            if (!item.show ||
+                                this.props.isNarrowScreen || this.props.isMobile) {
                                 return null;
                             }
                             let title = item.label;
@@ -174,23 +176,17 @@ class Excel extends Component {
                 </thead>
                 <tbody onDoubleClick={this._showEditor.bind(this)}>
                     {this.state.data.map((row, rowidx) => {
-                        //let cellIdx = 0;
                         return (
                             <tr key={rowidx}>{
-                                //Object.keys(row).map((cell, idx) => {
                                 this.props.schema.map((schema, idx) => {
                                     let cell = schema.id;
-                                    //let idx = cellIdx++;
-                                //}, this);
-                                //    const schema = this.props.schema[idx];
-                                    if (!schema || !schema.show) {
+                                    if (!schema || !schema.show || this.props.isNarrowScreen || this.props.isMobile) {
                                         return null;
                                     }
                                     const isRating = schema.type === 'rating';
                                     const edit = this.state.edit;
                                     let content = row[cell];
-                                    if (!isRating && edit && edit.row === rowidx && edit.key ===
-                                        schema.id) {
+                                    if (!isRating && edit && edit.row === rowidx && edit.key === schema.id) {
                                         content = (
                                             <form onSubmit={this._save.bind(this)}>
                                                 <FormInput ref="input" {...schema} defaultValue={content} />
@@ -204,6 +200,7 @@ class Excel extends Component {
                                         <td
                                             className={classNames({
                                                 [`schema-${schema.id}`]: true,
+                                                // 'ExceltdMobile': this.props.isMobile,
                                                 'ExcelEditable': !isRating,
                                                 'ExcelDataLeft': schema.align === 'left',
                                                 'ExcelDataRight': schema.align === 'right',
@@ -219,7 +216,12 @@ class Excel extends Component {
                                 }, this)
                                 }
                                 <td className="ExcelDataCenter">
-                                    <Actions onAction={this._actionClick.bind(this, rowidx)} />
+                                    {this.props.isNarrowScreen || this.props.isMobile
+                                        ? <ActionCompact {...row} onAction={this._actionClick.bind(this, rowidx)} 
+                                            isNarrowScreen={this.props.isNarrowScreen} isMobile={this.props.isMobile}
+                                          />
+                                        : <Actions onAction={this._actionClick.bind(this, rowidx)} />
+                                    }
                                 </td>
                             </tr>
                         );

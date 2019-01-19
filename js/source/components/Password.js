@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as Crypto from '../util/Crypto';
-import Button from './Button';
 
 // Google: react password show hide
 //     https://codepen.io/Don-m/pen/mmgyQG?editors=0010
@@ -50,7 +49,7 @@ class Password extends Component {
         return Crypto.Decrypt(scambled, salt);  // U2FsdGVkX19guu+rpSVb60BNiN1K3ShZ23rSSzVy682m6w3VKExtL/fYT0iBI1AA
         // let myDecipher = Crypto.xDecipher(salt || '');  //thisiscool
         // let plain = myDecipher(scambled || '');  // 4476767877726a33757c7c6771727f7f
-        // return plain;  // Weekday football
+        // return plain;  // Weekday football   U2FsdGVkX1+g834fokw18q0Ak9eQ4gFGpx1wnF7450053dx7kdlCvQVn15HSrK5d
     }
     render() {
         return (
@@ -70,25 +69,6 @@ class Password extends Component {
                     <div className="PasswordLabel">Encrypted: </div>
                     <input className="PasswordInput" disabled={this.state.mode!=='decrypt'} type="text" id="encryptedcontent" value={this.state.encryptedText} ></input>
                 </div>
-                 {/* {
-                     !this.props.hideDecrptButton && 
-                     <button onClick={() => this.setState({showDecryptDialog: true})}>decrypt</button>
-                 } */}
-                 {/* {this.state.showDecryptDialog
-                     ? <Dialog
-                         modal={true}
-                         header="Decrypted Data"
-                         hasCancel={false}
-                         confirmLabel="OK"
-                         onAction={() => this.setState({showDecryptDialog: false})}
-                     >
-                         <Password 
-                             mode='decrypt'
-                             hideDecrptButton={true}
-                             defaultValue={this.state.encryptedText} />
-                     </Dialog>
-                     : null} */}
-
             </div>
         );
     }

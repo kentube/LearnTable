@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Logo from './components/Logo';
-import Whinepad from './components/Whinepad';
+import Workpad from './components/Workpad';
 import schema from './schema';
 
 let data = JSON.parse(localStorage.getItem('data'));
@@ -19,7 +19,7 @@ ReactDOM.render(
     <div className="app-header">
       <Logo /> Welcome to my Table Editor
     </div>
-    <Whinepad schema={schema} initialData={data} />
+    <Workpad schema={schema} initialData={data} />
   </div>,
   document.getElementById('pad')
 );
