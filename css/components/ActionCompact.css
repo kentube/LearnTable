@@ -1,0 +1,37 @@
+.ActionCompact span {
+    cursor: pointer;
+    margin: 5px 7px;
+    text-align: center;
+    transition-duration: 0.1s;
+    transition-property: transform;
+  }
+
+  .ActionCompact span:hover {
+    transform: scale(1.1);
+  }
+
+  .ActionCompact .ActionsName {
+    font-size: 6.1vw;    
+  }
+  .ActionCompact .ActionsNameCompact {
+    font-size: 7.25vw;    
+  }
+  
+  .ActionCompact .ActionsInfo {
+    border-color: #3498DB;
+    color: #3498DB;
+  }
+  
+  .ActionCompact .ActionsEditCompact {
+    font-size: 7.25vw;    
+  }
+
+  .ActionCompact .ActionsDelete {
+    border-color: #B7477D;
+    color: #B7477D;
+  }
+  .ActionCompact .ActionsDeleteCompact {
+    border-color: #B7477D;
+    color: #B7477D;
+    font-size: 7.25vw;    
+  }

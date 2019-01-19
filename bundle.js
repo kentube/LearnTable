@@ -13,9 +13,9 @@ var _Logo = require('./components/Logo');
 
 var _Logo2 = _interopRequireDefault(_Logo);
 
-var _Whinepad = require('./components/Whinepad');
+var _Workpad = require('./components/Workpad');
 
-var _Whinepad2 = _interopRequireDefault(_Whinepad);
+var _Workpad2 = _interopRequireDefault(_Workpad);
 
 var _schema = require('./schema');
 
@@ -42,9 +42,9 @@ _reactDom2.default.render(_react2.default.createElement(
     _react2.default.createElement(_Logo2.default, null),
     ' Welcome to my Table Editor'
   ),
-  _react2.default.createElement(_Whinepad2.default, { schema: _schema2.default, initialData: data })
+  _react2.default.createElement(_Workpad2.default, { schema: _schema2.default, initialData: data })
 ), document.getElementById('pad'));
-},{"./components/Logo":10,"./components/Whinepad":14,"./schema":15,"react":65,"react-dom":62}],2:[function(require,module,exports){
+},{"./components/Logo":11,"./components/Workpad":15,"./schema":16,"react":66,"react-dom":63}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -54,6 +54,64 @@ exports.default = {
   grapes: ['Baco Noir', 'Barbera', 'Cabernet Franc', 'Cabernet Sauvignon', 'Catawba', 'Cayuga White', 'Chambourcin', 'Chancellor', 'Chardonel', 'Chardonnay', 'Chelois', 'Chenin Blanc', 'Concord', 'Delaware', 'Frontenac', 'Gewürztraminer', 'Malbec', 'Maréchal Fochr', 'Merlot', 'Norton', 'Pinot Blanc', 'Pinot Gris', 'Pinot Noir', 'Riesling', 'Sangiovese', 'Sauvignon Blanc', 'Seyval Blanc', 'Syrah', 'Sémillon', 'Traminette', 'Vidal Blanc', 'Vignoles', 'Zinfandel']
 };
 },{}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ActionCompact = function ActionCompact(props) {
+    return _react2.default.createElement(
+        'div',
+        { className: 'ActionCompact' },
+        _react2.default.createElement(
+            'span',
+            {
+                className: props.isMobile ? "ActionsNameCompact" : "ActionsName"
+            },
+            props["name"]
+        ),
+        _react2.default.createElement(
+            'span',
+            {
+                tabIndex: '0',
+                className: props.isMobile ? "ActionsEditCompact" : "ActionsEdit",
+                title: 'Edit',
+                onClick: props.onAction.bind(null, 'edit') },
+            '\u2710'
+        ),
+        _react2.default.createElement(
+            'span',
+            {
+                tabIndex: '0',
+                className: props.isMobile ? "ActionsDeleteCompact" : "ActionsDelete",
+                title: 'Delete',
+                onClick: props.onAction.bind(null, 'delete') },
+            'x'
+        )
+    );
+};
+
+ActionCompact.propTypes = {
+    onAction: _propTypes2.default.func
+};
+
+ActionCompact.defaultProps = {
+    onAction: function onAction() {}
+};
+
+exports.default = ActionCompact;
+},{"prop-types":59,"react":66}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -113,7 +171,7 @@ Actions.defaultProps = {
 };
 
 exports.default = Actions;
-},{"prop-types":58,"react":65}],4:[function(require,module,exports){
+},{"prop-types":59,"react":66}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -148,7 +206,7 @@ Button.propTypes = {
 };
 
 exports.default = Button;
-},{"classnames":18,"prop-types":58,"react":65}],5:[function(require,module,exports){
+},{"classnames":19,"prop-types":59,"react":66}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -259,7 +317,7 @@ Dialog.defaultProps = {
 };
 
 exports.default = Dialog;
-},{"./Button":4,"prop-types":58,"react":65}],6:[function(require,module,exports){
+},{"./Button":5,"prop-types":59,"react":66}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -269,6 +327,10 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ActionCompact = require('./ActionCompact');
+
+var _ActionCompact2 = _interopRequireDefault(_ActionCompact);
 
 var _Actions = require('./Actions');
 
@@ -497,7 +559,7 @@ var Excel = function (_Component) {
                         'tr',
                         null,
                         this.props.schema.map(function (item) {
-                            if (!item.show) {
+                            if (!item.show || _this2.props.isNarrowScreen || _this2.props.isMobile) {
                                 return null;
                             }
                             var title = item.label;
@@ -525,20 +587,14 @@ var Excel = function (_Component) {
                     'tbody',
                     { onDoubleClick: this._showEditor.bind(this) },
                     this.state.data.map(function (row, rowidx) {
-                        //let cellIdx = 0;
                         return _react2.default.createElement(
                             'tr',
                             { key: rowidx },
-
-                            //Object.keys(row).map((cell, idx) => {
                             _this2.props.schema.map(function (schema, idx) {
                                 var _classNames;
 
                                 var cell = schema.id;
-                                //let idx = cellIdx++;
-                                //}, this);
-                                //    const schema = this.props.schema[idx];
-                                if (!schema || !schema.show) {
+                                if (!schema || !schema.show || _this2.props.isNarrowScreen || _this2.props.isMobile) {
                                     return null;
                                 }
                                 var isRating = schema.type === 'rating';
@@ -566,7 +622,9 @@ var Excel = function (_Component) {
                             _react2.default.createElement(
                                 'td',
                                 { className: 'ExcelDataCenter' },
-                                _react2.default.createElement(_Actions2.default, { onAction: _this2._actionClick.bind(_this2, rowidx) })
+                                _this2.props.isNarrowScreen || _this2.props.isMobile ? _react2.default.createElement(_ActionCompact2.default, _extends({}, row, { onAction: _this2._actionClick.bind(_this2, rowidx),
+                                    isNarrowScreen: _this2.props.isNarrowScreen, isMobile: _this2.props.isMobile
+                                })) : _react2.default.createElement(_Actions2.default, { onAction: _this2._actionClick.bind(_this2, rowidx) })
                             )
                         );
                     }, this)
@@ -585,7 +643,7 @@ Excel.propTypes = {
 };
 
 exports.default = Excel;
-},{"./Actions":3,"./Dialog":5,"./Form":8,"./FormInput":9,"./Rating":12,"classnames":18,"prop-types":58,"react":65}],7:[function(require,module,exports){
+},{"./ActionCompact":3,"./Actions":4,"./Dialog":6,"./Form":9,"./FormInput":10,"./Rating":13,"classnames":19,"prop-types":59,"react":66}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -686,7 +744,7 @@ var FileSelector = function (_React$Component) {
 // };
 
 exports.default = FileSelector;
-},{"prop-types":58,"react":65}],8:[function(require,module,exports){
+},{"prop-types":59,"react":66}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -807,7 +865,7 @@ Form.propTypes = {
 };
 
 exports.default = Form;
-},{"./FormInput":9,"./Rating":12,"prop-types":58,"react":65}],9:[function(require,module,exports){
+},{"./FormInput":10,"./Rating":13,"prop-types":59,"react":66}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -903,7 +961,7 @@ FormInput.propTypes = {
 };
 
 exports.default = FormInput;
-},{"./Password":11,"./Rating":12,"./Suggest":13,"prop-types":58,"react":65}],10:[function(require,module,exports){
+},{"./Password":12,"./Rating":13,"./Suggest":14,"prop-types":59,"react":66}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -944,7 +1002,7 @@ var Logo = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Logo;
-},{"react":65}],11:[function(require,module,exports){
+},{"react":66}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -964,10 +1022,6 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 var _Crypto = require('../util/Crypto');
 
 var Crypto = _interopRequireWildcard(_Crypto);
-
-var _Button = require('./Button');
-
-var _Button2 = _interopRequireDefault(_Button);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -1038,7 +1092,7 @@ var Password = function (_Component) {
             return Crypto.Decrypt(scambled, salt); // U2FsdGVkX19guu+rpSVb60BNiN1K3ShZ23rSSzVy682m6w3VKExtL/fYT0iBI1AA
             // let myDecipher = Crypto.xDecipher(salt || '');  //thisiscool
             // let plain = myDecipher(scambled || '');  // 4476767877726a33757c7c6771727f7f
-            // return plain;  // Weekday football
+            // return plain;  // Weekday football   U2FsdGVkX1+g834fokw18q0Ak9eQ4gFGpx1wnF7450053dx7kdlCvQVn15HSrK5d
         }
     }, {
         key: 'render',
@@ -1112,7 +1166,7 @@ Password.defaultProps = {
 };
 
 exports.default = Password;
-},{"../util/Crypto":16,"./Button":4,"prop-types":58,"react":65}],12:[function(require,module,exports){
+},{"../util/Crypto":17,"prop-types":59,"react":66}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1240,7 +1294,7 @@ Rating.defaultProps = {
 };
 
 exports.default = Rating;
-},{"classnames":18,"prop-types":58,"react":65}],13:[function(require,module,exports){
+},{"classnames":19,"prop-types":59,"react":66}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1358,7 +1412,7 @@ Suggest.propTypes = {
 };
 
 exports.default = Suggest;
-},{"prop-types":58,"react":65}],14:[function(require,module,exports){
+},{"prop-types":59,"react":66}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1419,24 +1473,41 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 //import Merge from './Util';
 
 
-var Whinepad = function (_Component) {
-    _inherits(Whinepad, _Component);
+var Workpad = function (_Component) {
+    _inherits(Workpad, _Component);
 
-    function Whinepad(props) {
-        _classCallCheck(this, Whinepad);
+    function Workpad(props) {
+        _classCallCheck(this, Workpad);
 
-        var _this = _possibleConstructorReturn(this, (Whinepad.__proto__ || Object.getPrototypeOf(Whinepad)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Workpad.__proto__ || Object.getPrototypeOf(Workpad)).call(this, props));
 
         _this.state = {
             data: props.initialData,
             addnew: false,
-            deleteAll: false
+            deleteAll: false,
+            width: window.innerWidth
         };
         _this._preSearchData = null;
         return _this;
     }
 
-    _createClass(Whinepad, [{
+    _createClass(Workpad, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this._handleWindowSizeChange();
+            window.addEventListener("resize", this._handleWindowSizeChange.bind(this));
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            window.removeEventListener("resize", this._handleWindowSizeChange.bind(this));
+        }
+    }, {
+        key: '_handleWindowSizeChange',
+        value: function _handleWindowSizeChange() {
+            this.setState({ width: window.innerWidth });
+        }
+    }, {
         key: '_uploadToServer',
         value: function _uploadToServer(format, ev) {
             ev.preventDefault();
@@ -1607,144 +1678,212 @@ var Whinepad = function (_Component) {
         value: function render() {
             var _this2 = this;
 
-            return _react2.default.createElement(
-                'div',
-                { className: 'Whinepad' },
-                _react2.default.createElement(
+            var urlProtocol = window.location.protocol;
+            var isFileUrl = urlProtocol === "file:";
+            var isMobile = (0, _Util.Mobilecheck)();
+            var width = this.state.width;
+
+            var isNarrowScreen = width <= 500;
+            if (isMobile || isNarrowScreen) {
+                return _react2.default.createElement(
                     'div',
-                    { className: 'WhinepadToolbar' },
+                    { className: 'Workpad' },
                     _react2.default.createElement(
                         'div',
-                        { className: 'WhinepadToolbarAdd' },
+                        { className: 'WorkpadToolbar' },
                         _react2.default.createElement(
-                            _Button2.default,
-                            {
-                                onClick: this._addNewDialog.bind(this),
-                                className: 'WhinepadToolbarAddButton' },
-                            '+ Add'
-                        ),
-                        _react2.default.createElement(
-                            _Button2.default,
-                            {
-                                onClick: this._deleteAllDialog.bind(this),
-                                className: 'WhinepadToolbarDelButton' },
-                            '- Delete all'
+                            'div',
+                            { className: 'WorkpadToolbarSearch' },
+                            _react2.default.createElement('input', {
+                                placeholder: 'Search...',
+                                onChange: this._search.bind(this),
+                                onFocus: this._startSearching.bind(this),
+                                onBlur: this._doneSearching.bind(this) })
                         )
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: 'WhinepadToolbarSearch' },
-                        _react2.default.createElement('input', {
-                            placeholder: 'Search...',
-                            onChange: this._search.bind(this),
-                            onFocus: this._startSearching.bind(this),
-                            onBlur: this._doneSearching.bind(this) })
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'WhinepadDatagrid' },
-                    _react2.default.createElement(_Excel2.default, {
-                        schema: this.props.schema,
-                        initialData: this.state.data,
-                        onDataChange: this._onExcelDataChange.bind(this) })
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'WhinepadToolbar' },
+                        { className: 'WorkpadDatagrid' },
+                        _react2.default.createElement(_Excel2.default, {
+                            isNarrowScreen: isNarrowScreen,
+                            isMobile: isMobile,
+                            schema: this.props.schema,
+                            initialData: this.state.data,
+                            onDataChange: this._onExcelDataChange.bind(this) })
+                    ),
                     _react2.default.createElement(
                         'div',
-                        { className: 'WhinepadToolbarImportExport' },
+                        { className: 'WorkpadToolbar' },
                         _react2.default.createElement(
-                            _Button2.default,
-                            { href: 'data.json',
-                                onClick: this._exportFile.bind(this, 'json'),
-                                className: 'WhinepadToolbarExportButton' },
-                            'Export Json'
+                            'div',
+                            { className: 'WorkpadToolbarImportExport' },
+                            _react2.default.createElement(
+                                _Button2.default,
+                                { href: 'data.csv',
+                                    onClick: function onClick(e) {
+                                        return _this2._uploadToServer('csv', e);
+                                    },
+                                    className: 'WorkpadToolbarExportButton' },
+                                'Save to Server'
+                            )
                         ),
                         _react2.default.createElement(
-                            _Button2.default,
-                            { href: 'data.csv',
-                                onClick: function onClick(e) {
-                                    return _this2._exportFile('csv', e);
-                                },
-                                className: 'WhinepadToolbarExportButton' },
-                            'Export Csv'
+                            'div',
+                            { className: 'WorkpadToolbarImportExport' },
+                            _react2.default.createElement(
+                                _Button2.default,
+                                { href: 'server.csv',
+                                    onClick: function onClick(e) {
+                                        return _this2._mergeFromServer('csv', e);
+                                    },
+                                    className: 'WorkpadToolbarExportButton' },
+                                'Load from Server'
+                            )
+                        )
+                    )
+                );
+            } else {
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'Workpad' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'WorkpadToolbar' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'WorkpadToolbarAdd' },
+                            _react2.default.createElement(
+                                _Button2.default,
+                                {
+                                    onClick: this._addNewDialog.bind(this),
+                                    className: 'WorkpadToolbarAddButton' },
+                                '+ Add'
+                            ),
+                            _react2.default.createElement(
+                                _Button2.default,
+                                {
+                                    onClick: this._deleteAllDialog.bind(this),
+                                    className: 'WorkpadToolbarDelButton' },
+                                '- Delete all'
+                            )
                         ),
                         _react2.default.createElement(
-                            _Button2.default,
-                            { href: 'data.csv',
-                                onClick: function onClick(e) {
-                                    return _this2._uploadToServer('csv', e);
-                                },
-                                className: 'WhinepadToolbarExportButton' },
-                            'Save to Server'
+                            'div',
+                            { className: 'WorkpadToolbarSearch' },
+                            _react2.default.createElement('input', {
+                                placeholder: 'Search...',
+                                onChange: this._search.bind(this),
+                                onFocus: this._startSearching.bind(this),
+                                onBlur: this._doneSearching.bind(this) })
                         )
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: 'WhinepadToolbarImportExport' },
+                        { className: 'WorkpadDatagrid' },
+                        _react2.default.createElement(_Excel2.default, {
+                            isNarrowScreen: isNarrowScreen,
+                            isMobile: isMobile,
+                            schema: this.props.schema,
+                            initialData: this.state.data,
+                            onDataChange: this._onExcelDataChange.bind(this) })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'WorkpadToolbar' },
                         _react2.default.createElement(
-                            _FileSelector2.default,
-                            { onAction0: function onAction0(f) {
-                                    return _this2._importFile(f, 'json');
-                                } },
-                            'Import Json'
+                            'div',
+                            { className: 'WorkpadToolbarImportExport' },
+                            _react2.default.createElement(
+                                _Button2.default,
+                                { href: 'data.json',
+                                    onClick: this._exportFile.bind(this, 'json'),
+                                    className: 'WorkpadToolbarExportButton' },
+                                'Export Json'
+                            ),
+                            _react2.default.createElement(
+                                _Button2.default,
+                                { href: 'data.csv',
+                                    onClick: function onClick(e) {
+                                        return _this2._exportFile('csv', e);
+                                    },
+                                    className: 'WorkpadToolbarExportButton' },
+                                'Export Csv'
+                            ),
+                            !isFileUrl ? _react2.default.createElement(
+                                _Button2.default,
+                                { href: 'data.csv',
+                                    onClick: function onClick(e) {
+                                        return _this2._uploadToServer('csv', e);
+                                    },
+                                    className: 'WorkpadToolbarExportButton' },
+                                'Save to Server'
+                            ) : null
                         ),
                         _react2.default.createElement(
-                            _FileSelector2.default,
-                            { onAction0: function onAction0(f) {
-                                    return _this2._importFile(f, 'csv');
-                                } },
-                            'Import Csv'
-                        ),
-                        _react2.default.createElement(
-                            _Button2.default,
-                            { href: 'server.csv',
-                                onClick: function onClick(e) {
-                                    return _this2._mergeFromServer('csv', e);
-                                },
-                                className: 'WhinepadToolbarExportButton' },
-                            'Load from Server'
+                            'div',
+                            { className: 'WorkpadToolbarImportExport' },
+                            _react2.default.createElement(
+                                _FileSelector2.default,
+                                { onAction0: function onAction0(f) {
+                                        return _this2._importFile(f, 'json');
+                                    } },
+                                'Import Json'
+                            ),
+                            _react2.default.createElement(
+                                _FileSelector2.default,
+                                { onAction0: function onAction0(f) {
+                                        return _this2._importFile(f, 'csv');
+                                    } },
+                                'Import Csv'
+                            ),
+                            !isFileUrl ? _react2.default.createElement(
+                                _Button2.default,
+                                { href: 'server.csv',
+                                    onClick: function onClick(e) {
+                                        return _this2._mergeFromServer('csv', e);
+                                    },
+                                    className: 'WorkpadToolbarExportButton' },
+                                'Load from Server'
+                            ) : null
                         )
-                    )
-                ),
-                this.state.addnew ? _react2.default.createElement(
-                    _Dialog2.default,
-                    {
-                        modal: true,
-                        header: 'Add new item',
-                        confirmLabel: 'Add',
-                        onAction: this._addNew.bind(this)
-                    },
-                    _react2.default.createElement(_Form2.default, {
-                        ref: 'form',
-                        fields: this.props.schema })
-                ) : null,
-                this.state.deleteAll ? _react2.default.createElement(
-                    _Dialog2.default,
-                    {
-                        modal: true,
-                        header: 'Delete all items',
-                        hasCancel: true,
-                        confirmLabel: 'Delete ALL',
-                        onAction: this._deleteAll.bind(this)
-                    },
-                    'Are you sure to delete All items?'
-                ) : null
-            );
+                    ),
+                    this.state.addnew ? _react2.default.createElement(
+                        _Dialog2.default,
+                        {
+                            modal: true,
+                            header: 'Add new item',
+                            confirmLabel: 'Add',
+                            onAction: this._addNew.bind(this)
+                        },
+                        _react2.default.createElement(_Form2.default, {
+                            ref: 'form',
+                            fields: this.props.schema })
+                    ) : null,
+                    this.state.deleteAll ? _react2.default.createElement(
+                        _Dialog2.default,
+                        {
+                            modal: true,
+                            header: 'Delete all items',
+                            hasCancel: true,
+                            confirmLabel: 'Delete ALL',
+                            onAction: this._deleteAll.bind(this)
+                        },
+                        'Are you sure to delete All items?'
+                    ) : null
+                );
+            }
         }
     }]);
 
-    return Whinepad;
+    return Workpad;
 }(_react.Component);
 
-Whinepad.propTypes = {
+Workpad.propTypes = {
     schema: _propTypes2.default.arrayOf(_propTypes2.default.object),
     initialData: _propTypes2.default.arrayOf(_propTypes2.default.object)
 };
-exports.default = Whinepad;
-},{"../util/Crypto":16,"../util/Util":17,"./Button":4,"./Dialog":5,"./Excel":6,"./FileSelector":7,"./Form":8,"prop-types":58,"react":65}],15:[function(require,module,exports){
+exports.default = Workpad;
+},{"../util/Crypto":17,"../util/Util":18,"./Button":5,"./Dialog":6,"./Excel":7,"./FileSelector":8,"./Form":9,"prop-types":59,"react":66}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1806,7 +1945,7 @@ exports.default = [{
     type: 'text',
     sample: 'Nice for the price'
 }];
-},{"./classification":2}],16:[function(require,module,exports){
+},{"./classification":2}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2179,7 +2318,7 @@ async function askMomES7() {
 })();
 
 */
-},{"crypto-js":27}],17:[function(require,module,exports){
+},{"crypto-js":28}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2340,8 +2479,28 @@ function Merge(json1, json2) {
     }
 }
 
+var mobilecheck = function mobilecheck() {
+    var check = false;
+    // eslint-disable-next-line no-useless-escape
+    (function (a) {
+        if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+    })(navigator.userAgent || navigator.vendor || window.opera);
+    return check;
+};
+
+var mobileAndTabletcheck = function mobileAndTabletcheck() {
+    var check = false;
+    // eslint-disable-next-line no-useless-escape
+    (function (a) {
+        if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+    })(navigator.userAgent || navigator.vendor || window.opera);
+    return check;
+};
+
+exports.Mobilecheck = mobilecheck;
+exports.MobileAndTabletcheck = mobileAndTabletcheck;
 exports.default = Merge;
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /*!
   Copyright (c) 2017 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -2395,7 +2554,7 @@ exports.default = Merge;
 	}
 }());
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -2628,7 +2787,7 @@ exports.default = Merge;
 	return CryptoJS.AES;
 
 }));
-},{"./cipher-core":20,"./core":21,"./enc-base64":22,"./evpkdf":24,"./md5":29}],20:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22,"./enc-base64":23,"./evpkdf":25,"./md5":30}],21:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -3509,7 +3668,7 @@ exports.default = Merge;
 
 
 }));
-},{"./core":21,"./evpkdf":24}],21:[function(require,module,exports){
+},{"./core":22,"./evpkdf":25}],22:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4270,7 +4429,7 @@ exports.default = Merge;
 	return CryptoJS;
 
 }));
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4406,7 +4565,7 @@ exports.default = Merge;
 	return CryptoJS.enc.Base64;
 
 }));
-},{"./core":21}],23:[function(require,module,exports){
+},{"./core":22}],24:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4556,7 +4715,7 @@ exports.default = Merge;
 	return CryptoJS.enc.Utf16;
 
 }));
-},{"./core":21}],24:[function(require,module,exports){
+},{"./core":22}],25:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4689,7 +4848,7 @@ exports.default = Merge;
 	return CryptoJS.EvpKDF;
 
 }));
-},{"./core":21,"./hmac":26,"./sha1":45}],25:[function(require,module,exports){
+},{"./core":22,"./hmac":27,"./sha1":46}],26:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4756,7 +4915,7 @@ exports.default = Merge;
 	return CryptoJS.format.Hex;
 
 }));
-},{"./cipher-core":20,"./core":21}],26:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],27:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4900,7 +5059,7 @@ exports.default = Merge;
 
 
 }));
-},{"./core":21}],27:[function(require,module,exports){
+},{"./core":22}],28:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4919,7 +5078,7 @@ exports.default = Merge;
 	return CryptoJS;
 
 }));
-},{"./aes":19,"./cipher-core":20,"./core":21,"./enc-base64":22,"./enc-utf16":23,"./evpkdf":24,"./format-hex":25,"./hmac":26,"./lib-typedarrays":28,"./md5":29,"./mode-cfb":30,"./mode-ctr":32,"./mode-ctr-gladman":31,"./mode-ecb":33,"./mode-ofb":34,"./pad-ansix923":35,"./pad-iso10126":36,"./pad-iso97971":37,"./pad-nopadding":38,"./pad-zeropadding":39,"./pbkdf2":40,"./rabbit":42,"./rabbit-legacy":41,"./rc4":43,"./ripemd160":44,"./sha1":45,"./sha224":46,"./sha256":47,"./sha3":48,"./sha384":49,"./sha512":50,"./tripledes":51,"./x64-core":52}],28:[function(require,module,exports){
+},{"./aes":20,"./cipher-core":21,"./core":22,"./enc-base64":23,"./enc-utf16":24,"./evpkdf":25,"./format-hex":26,"./hmac":27,"./lib-typedarrays":29,"./md5":30,"./mode-cfb":31,"./mode-ctr":33,"./mode-ctr-gladman":32,"./mode-ecb":34,"./mode-ofb":35,"./pad-ansix923":36,"./pad-iso10126":37,"./pad-iso97971":38,"./pad-nopadding":39,"./pad-zeropadding":40,"./pbkdf2":41,"./rabbit":43,"./rabbit-legacy":42,"./rc4":44,"./ripemd160":45,"./sha1":46,"./sha224":47,"./sha256":48,"./sha3":49,"./sha384":50,"./sha512":51,"./tripledes":52,"./x64-core":53}],29:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -4996,7 +5155,7 @@ exports.default = Merge;
 	return CryptoJS.lib.WordArray;
 
 }));
-},{"./core":21}],29:[function(require,module,exports){
+},{"./core":22}],30:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5265,7 +5424,7 @@ exports.default = Merge;
 	return CryptoJS.MD5;
 
 }));
-},{"./core":21}],30:[function(require,module,exports){
+},{"./core":22}],31:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5344,7 +5503,7 @@ exports.default = Merge;
 	return CryptoJS.mode.CFB;
 
 }));
-},{"./cipher-core":20,"./core":21}],31:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],32:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5461,7 +5620,7 @@ exports.default = Merge;
 	return CryptoJS.mode.CTRGladman;
 
 }));
-},{"./cipher-core":20,"./core":21}],32:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],33:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5520,7 +5679,7 @@ exports.default = Merge;
 	return CryptoJS.mode.CTR;
 
 }));
-},{"./cipher-core":20,"./core":21}],33:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],34:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5561,7 +5720,7 @@ exports.default = Merge;
 	return CryptoJS.mode.ECB;
 
 }));
-},{"./cipher-core":20,"./core":21}],34:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],35:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5616,7 +5775,7 @@ exports.default = Merge;
 	return CryptoJS.mode.OFB;
 
 }));
-},{"./cipher-core":20,"./core":21}],35:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],36:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5666,7 +5825,7 @@ exports.default = Merge;
 	return CryptoJS.pad.Ansix923;
 
 }));
-},{"./cipher-core":20,"./core":21}],36:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],37:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5711,7 +5870,7 @@ exports.default = Merge;
 	return CryptoJS.pad.Iso10126;
 
 }));
-},{"./cipher-core":20,"./core":21}],37:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],38:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5752,7 +5911,7 @@ exports.default = Merge;
 	return CryptoJS.pad.Iso97971;
 
 }));
-},{"./cipher-core":20,"./core":21}],38:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],39:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5783,7 +5942,7 @@ exports.default = Merge;
 	return CryptoJS.pad.NoPadding;
 
 }));
-},{"./cipher-core":20,"./core":21}],39:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],40:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5829,7 +5988,7 @@ exports.default = Merge;
 	return CryptoJS.pad.ZeroPadding;
 
 }));
-},{"./cipher-core":20,"./core":21}],40:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22}],41:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -5975,7 +6134,7 @@ exports.default = Merge;
 	return CryptoJS.PBKDF2;
 
 }));
-},{"./core":21,"./hmac":26,"./sha1":45}],41:[function(require,module,exports){
+},{"./core":22,"./hmac":27,"./sha1":46}],42:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -6166,7 +6325,7 @@ exports.default = Merge;
 	return CryptoJS.RabbitLegacy;
 
 }));
-},{"./cipher-core":20,"./core":21,"./enc-base64":22,"./evpkdf":24,"./md5":29}],42:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22,"./enc-base64":23,"./evpkdf":25,"./md5":30}],43:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -6359,7 +6518,7 @@ exports.default = Merge;
 	return CryptoJS.Rabbit;
 
 }));
-},{"./cipher-core":20,"./core":21,"./enc-base64":22,"./evpkdf":24,"./md5":29}],43:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22,"./enc-base64":23,"./evpkdf":25,"./md5":30}],44:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -6499,7 +6658,7 @@ exports.default = Merge;
 	return CryptoJS.RC4;
 
 }));
-},{"./cipher-core":20,"./core":21,"./enc-base64":22,"./evpkdf":24,"./md5":29}],44:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22,"./enc-base64":23,"./evpkdf":25,"./md5":30}],45:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -6767,7 +6926,7 @@ exports.default = Merge;
 	return CryptoJS.RIPEMD160;
 
 }));
-},{"./core":21}],45:[function(require,module,exports){
+},{"./core":22}],46:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -6918,7 +7077,7 @@ exports.default = Merge;
 	return CryptoJS.SHA1;
 
 }));
-},{"./core":21}],46:[function(require,module,exports){
+},{"./core":22}],47:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -6999,7 +7158,7 @@ exports.default = Merge;
 	return CryptoJS.SHA224;
 
 }));
-},{"./core":21,"./sha256":47}],47:[function(require,module,exports){
+},{"./core":22,"./sha256":48}],48:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -7199,7 +7358,7 @@ exports.default = Merge;
 	return CryptoJS.SHA256;
 
 }));
-},{"./core":21}],48:[function(require,module,exports){
+},{"./core":22}],49:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -7523,7 +7682,7 @@ exports.default = Merge;
 	return CryptoJS.SHA3;
 
 }));
-},{"./core":21,"./x64-core":52}],49:[function(require,module,exports){
+},{"./core":22,"./x64-core":53}],50:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -7607,7 +7766,7 @@ exports.default = Merge;
 	return CryptoJS.SHA384;
 
 }));
-},{"./core":21,"./sha512":50,"./x64-core":52}],50:[function(require,module,exports){
+},{"./core":22,"./sha512":51,"./x64-core":53}],51:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -7931,7 +8090,7 @@ exports.default = Merge;
 	return CryptoJS.SHA512;
 
 }));
-},{"./core":21,"./x64-core":52}],51:[function(require,module,exports){
+},{"./core":22,"./x64-core":53}],52:[function(require,module,exports){
 ;(function (root, factory, undef) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -8702,7 +8861,7 @@ exports.default = Merge;
 	return CryptoJS.TripleDES;
 
 }));
-},{"./cipher-core":20,"./core":21,"./enc-base64":22,"./evpkdf":24,"./md5":29}],52:[function(require,module,exports){
+},{"./cipher-core":21,"./core":22,"./enc-base64":23,"./evpkdf":25,"./md5":30}],53:[function(require,module,exports){
 ;(function (root, factory) {
 	if (typeof exports === "object") {
 		// CommonJS
@@ -9007,7 +9166,7 @@ exports.default = Merge;
 	return CryptoJS;
 
 }));
-},{"./core":21}],53:[function(require,module,exports){
+},{"./core":22}],54:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -9099,7 +9258,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -9285,7 +9444,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -9380,7 +9539,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":59,"_process":54}],56:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":60,"_process":55}],57:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -9441,7 +9600,7 @@ module.exports = function() {
   return ReactPropTypes;
 };
 
-},{"./lib/ReactPropTypesSecret":59}],57:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":60}],58:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -10000,7 +10159,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 };
 
 }).call(this,require('_process'))
-},{"./checkPropTypes":55,"./lib/ReactPropTypesSecret":59,"_process":54,"object-assign":53}],58:[function(require,module,exports){
+},{"./checkPropTypes":56,"./lib/ReactPropTypesSecret":60,"_process":55,"object-assign":54}],59:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -10032,7 +10191,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./factoryWithThrowingShims":56,"./factoryWithTypeCheckers":57,"_process":54}],59:[function(require,module,exports){
+},{"./factoryWithThrowingShims":57,"./factoryWithTypeCheckers":58,"_process":55}],60:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -10046,7 +10205,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 (function (process){
 /** @license React v16.7.0
  * react-dom.development.js
@@ -30135,7 +30294,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":54,"object-assign":53,"prop-types/checkPropTypes":55,"react":65,"scheduler":70,"scheduler/tracing":71}],61:[function(require,module,exports){
+},{"_process":55,"object-assign":54,"prop-types/checkPropTypes":56,"react":66,"scheduler":71,"scheduler/tracing":72}],62:[function(require,module,exports){
 /** @license React v16.7.0
  * react-dom.production.min.js
  *
@@ -30386,7 +30545,7 @@ void 0:t("40");return a._reactRootContainer?(Uh(function(){fi(null,null,a,!1,fun
 Ka,La,Ca.injectEventPluginsByName,qa,Ra,function(a){za(a,Qa)},Ib,Jb,Jd,Ea]}};function hi(a,b){di(a)?void 0:t("299","unstable_createRoot");return new ci(a,!0,null!=b&&!0===b.hydrate)}(function(a){var b=a.findFiberByHostInstance;return We(n({},a,{overrideProps:null,findHostInstanceByFiber:function(a){a=nd(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null}}))})({findFiberByHostInstance:Ia,bundleType:0,version:"16.7.0",rendererPackageName:"react-dom"});
 var li={default:ki},mi=li&&ki||li;module.exports=mi.default||mi;
 
-},{"object-assign":53,"react":65,"scheduler":70}],62:[function(require,module,exports){
+},{"object-assign":54,"react":66,"scheduler":71}],63:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -30428,7 +30587,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":60,"./cjs/react-dom.production.min.js":61,"_process":54}],63:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":61,"./cjs/react-dom.production.min.js":62,"_process":55}],64:[function(require,module,exports){
 (function (process){
 /** @license React v16.7.0
  * react.development.js
@@ -32315,7 +32474,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":54,"object-assign":53,"prop-types/checkPropTypes":55}],64:[function(require,module,exports){
+},{"_process":55,"object-assign":54,"prop-types/checkPropTypes":56}],65:[function(require,module,exports){
 /** @license React v16.7.0
  * react.production.min.js
  *
@@ -32341,7 +32500,7 @@ _currentValue:a,_currentValue2:a,_threadCount:0,Provider:null,Consumer:null};a.P
 if(null!=b){void 0!==b.ref&&(h=b.ref,f=K.current);void 0!==b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)L.call(b,c)&&!M.hasOwnProperty(c)&&(d[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)d.children=e;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];d.children=l}return{$$typeof:p,type:a.type,key:g,ref:h,props:d,_owner:f}},createFactory:function(a){var b=N.bind(null,a);b.type=a;return b},isValidElement:O,version:"16.7.0",
 unstable_ConcurrentMode:x,unstable_Profiler:u,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:K,assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default||Z;
 
-},{"object-assign":53}],65:[function(require,module,exports){
+},{"object-assign":54}],66:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -32352,7 +32511,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":63,"./cjs/react.production.min.js":64,"_process":54}],66:[function(require,module,exports){
+},{"./cjs/react.development.js":64,"./cjs/react.production.min.js":65,"_process":55}],67:[function(require,module,exports){
 (function (process){
 /** @license React v0.12.0
  * scheduler-tracing.development.js
@@ -32779,7 +32938,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 }
 
 }).call(this,require('_process'))
-},{"_process":54}],67:[function(require,module,exports){
+},{"_process":55}],68:[function(require,module,exports){
 /** @license React v0.12.0
  * scheduler-tracing.production.min.js
  *
@@ -32791,7 +32950,7 @@ exports.unstable_unsubscribe = unstable_unsubscribe;
 
 'use strict';Object.defineProperty(exports,"__esModule",{value:!0});var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_wrap=function(a){return a};exports.unstable_subscribe=function(){};exports.unstable_unsubscribe=function(){};
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (process,global){
 /** @license React v0.12.0
  * scheduler.development.js
@@ -33498,7 +33657,7 @@ exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":54}],69:[function(require,module,exports){
+},{"_process":55}],70:[function(require,module,exports){
 (function (global){
 /** @license React v0.12.0
  * scheduler.production.min.js
@@ -33523,7 +33682,7 @@ b=d.previous;b.next=d.previous=a;a.next=d;a.previous=b}return a};exports.unstabl
 exports.unstable_shouldYield=function(){return!f&&(null!==c&&c.expirationTime<l||w())};exports.unstable_continueExecution=function(){null!==c&&p()};exports.unstable_pauseExecution=function(){};exports.unstable_getFirstCallbackNode=function(){return c};
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -33534,7 +33693,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler.development.js":68,"./cjs/scheduler.production.min.js":69,"_process":54}],71:[function(require,module,exports){
+},{"./cjs/scheduler.development.js":69,"./cjs/scheduler.production.min.js":70,"_process":55}],72:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -33545,4 +33704,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/scheduler-tracing.development.js":66,"./cjs/scheduler-tracing.production.min.js":67,"_process":54}]},{},[1]);
+},{"./cjs/scheduler-tracing.development.js":67,"./cjs/scheduler-tracing.production.min.js":68,"_process":55}]},{},[1]);

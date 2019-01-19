@@ -7,19 +7,30 @@ import Form from './Form'; // <- the "add new item" form
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 //import Merge from './Util';
-import {Merge, ConvertToExcelCsv, ConvertFromExcelCsv} from '../util/Util';
+import {Merge, ConvertToExcelCsv, ConvertFromExcelCsv, Mobilecheck} from '../util/Util';
 import * as Crypto from '../util/Crypto';
 
-class Whinepad extends Component {
+class Workpad extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: props.initialData,
             addnew: false,
             deleteAll: false,
+            width: window.innerWidth, 
         };
         this._preSearchData = null;
-    }    
+    }
+
+    componentDidMount() {
+        this._handleWindowSizeChange();
+        window.addEventListener("resize", this._handleWindowSizeChange.bind(this));
+    }
+    componentWillUnmount() {
+        window.removeEventListener("resize", this._handleWindowSizeChange.bind(this));
+    }
+    _handleWindowSizeChange() { this.setState({ width: window.innerWidth }); }
+
     _uploadToServer(format, ev) {
         ev.preventDefault();
 
@@ -168,22 +179,16 @@ class Whinepad extends Component {
         this.setState({ data: searchdata });
     }
     render() {
-        return (
-            <div className="Whinepad">
-                <div className="WhinepadToolbar">
-                    <div className="WhinepadToolbarAdd">
-                        <Button
-                            onClick={this._addNewDialog.bind(this)}
-                            className="WhinepadToolbarAddButton">
-                            + Add
-                        </Button>
-                        <Button
-                            onClick={this._deleteAllDialog.bind(this)}
-                            className="WhinepadToolbarDelButton">
-                            - Delete all
-                        </Button>
-                    </div>                    
-                    <div className="WhinepadToolbarSearch">
+        const urlProtocol = window.location.protocol;
+        const isFileUrl = urlProtocol === "file:";
+        const isMobile = Mobilecheck();
+        const { width } = this.state;
+        const isNarrowScreen = width <= 500;
+        if (isMobile || isNarrowScreen) {
+            return (
+            <div className="Workpad">
+                <div className="WorkpadToolbar">
+                    <div className="WorkpadToolbarSearch">
                         <input
                             placeholder="Search..."
                             onChange={this._search.bind(this)}
@@ -191,30 +196,82 @@ class Whinepad extends Component {
                             onBlur={this._doneSearching.bind(this)} />
                     </div>
                 </div>
-                <div className="WhinepadDatagrid">
+                <div className="WorkpadDatagrid">
                     <Excel
+                        isNarrowScreen={isNarrowScreen}
+                        isMobile={isMobile}
                         schema={this.props.schema}
                         initialData={this.state.data}
                         onDataChange={this._onExcelDataChange.bind(this)} />
                 </div>
-                <div className="WhinepadToolbar">
-                    <div className="WhinepadToolbarImportExport">
-                        <Button href="data.json"
-                            onClick={this._exportFile.bind(this, 'json')} 
-                            className="WhinepadToolbarExportButton">Export Json</Button>
-                        <Button href="data.csv"
-                            onClick={(e) => this._exportFile('csv', e) }
-                            className="WhinepadToolbarExportButton">Export Csv</Button>
+                <div className="WorkpadToolbar">
+                    <div className="WorkpadToolbarImportExport">
                         <Button href="data.csv"
                             onClick={(e) => this._uploadToServer('csv', e) }
-                            className="WhinepadToolbarExportButton">Save to Server</Button>
+                            className="WorkpadToolbarExportButton">Save to Server</Button>
                     </div>
-                    <div className="WhinepadToolbarImportExport">
-                        <FileSelector onAction0={(f)=>this._importFile(f, 'json')}>Import Json</FileSelector>
-                        <FileSelector onAction0={(f)=>this._importFile(f, 'csv')}>Import Csv</FileSelector>
+                    <div className="WorkpadToolbarImportExport">
                         <Button href="server.csv"
                             onClick={(e) => this._mergeFromServer('csv', e) }
-                            className="WhinepadToolbarExportButton">Load from Server</Button>
+                            className="WorkpadToolbarExportButton">Load from Server</Button>
+                    </div>
+                </div>
+            </div>
+            );
+        } else {
+            return (
+            <div className="Workpad">
+                <div className="WorkpadToolbar">
+                    <div className="WorkpadToolbarAdd">
+                        <Button
+                            onClick={this._addNewDialog.bind(this)}
+                            className="WorkpadToolbarAddButton">
+                            + Add
+                        </Button>
+                        <Button
+                            onClick={this._deleteAllDialog.bind(this)}
+                            className="WorkpadToolbarDelButton">
+                            - Delete all
+                        </Button>
+                    </div>                    
+                    <div className="WorkpadToolbarSearch">
+                        <input
+                            placeholder="Search..."
+                            onChange={this._search.bind(this)}
+                            onFocus={this._startSearching.bind(this)}
+                            onBlur={this._doneSearching.bind(this)} />
+                    </div>
+                </div>
+                <div className="WorkpadDatagrid">
+                    <Excel
+                        isNarrowScreen={isNarrowScreen}
+                        isMobile={isMobile}
+                        schema={this.props.schema}
+                        initialData={this.state.data}
+                        onDataChange={this._onExcelDataChange.bind(this)} />
+                </div>
+                <div className="WorkpadToolbar">
+                    <div className="WorkpadToolbarImportExport">
+                        <Button href="data.json"
+                            onClick={this._exportFile.bind(this, 'json')} 
+                            className="WorkpadToolbarExportButton">Export Json</Button>
+                        <Button href="data.csv"
+                            onClick={(e) => this._exportFile('csv', e) }
+                            className="WorkpadToolbarExportButton">Export Csv</Button>
+                        {!isFileUrl
+                            ? <Button href="data.csv"
+                            onClick={(e) => this._uploadToServer('csv', e) }
+                            className="WorkpadToolbarExportButton">Save to Server</Button>
+                            : null}
+                    </div>
+                    <div className="WorkpadToolbarImportExport">
+                        <FileSelector onAction0={(f)=>this._importFile(f, 'json')}>Import Json</FileSelector>
+                        <FileSelector onAction0={(f)=>this._importFile(f, 'csv')}>Import Csv</FileSelector>
+                        {!isFileUrl
+                            ? <Button href="server.csv"
+                                onClick={(e) => this._mergeFromServer('csv', e) }
+                                className="WorkpadToolbarExportButton">Load from Server</Button>
+                            : null}
                     </div>
                 </div>
                 {this.state.addnew
@@ -229,23 +286,24 @@ class Whinepad extends Component {
                             fields={this.props.schema} />
                     </Dialog>
                     : null}
-                 {this.state.deleteAll
-                     ? <Dialog
-                         modal={true}
-                         header="Delete all items"
-                         hasCancel={true}
-                         confirmLabel="Delete ALL"
-                         onAction={this._deleteAll.bind(this)}
-                         >
-                         Are you sure to delete All items?
-                     </Dialog>
-                     : null}
+                {this.state.deleteAll
+                    ? <Dialog
+                        modal={true}
+                        header="Delete all items"
+                        hasCancel={true}
+                        confirmLabel="Delete ALL"
+                        onAction={this._deleteAll.bind(this)}
+                        >
+                        Are you sure to delete All items?
+                    </Dialog>
+                    : null}
             </div>
-        );
+            );
+        }
     }
 }
 
-Whinepad.propTypes = {
+Workpad.propTypes = {
     schema: PropTypes.arrayOf(
         PropTypes.object
     ),
@@ -253,5 +311,5 @@ Whinepad.propTypes = {
         PropTypes.object
     ),
 };
-export default Whinepad;
+export default Workpad;
 

@@ -1,5 +1,6 @@
 'use strict';
 
+import * as Util from './util/Util';
 import Password from './components/Password';
 import FileSelector from './components/FileSelector';
 import Dialog from './components/Dialog';
@@ -17,6 +18,8 @@ ReactDOM.render(
     <div style={{ padding: '20px' }}>
         <h1>Component discoverer</h1>
 
+        <h2>Is Mobile? {Util.Mobilecheck()?"true":"false"}</h2>
+
         <h2>Logo</h2>
         <div style={{ display: 'inline-block', background: 'purple' }}><Logo /></div>
 
@@ -27,7 +30,7 @@ ReactDOM.render(
 
         <h2>Password</h2>
         <div><Password mode='encrypt' /></div>
-        <div><Password mode='decrypt' defaultValue='U2FsdGVkX19guu+rpSVb60BNiN1K3ShZ23rSSzVy682m6w3VKExtL/fYT0iBI1AA' /></div>
+        <div><Password mode='decrypt' defaultValue='U2FsdGVkX1+g834fokw18q0Ak9eQ4gFGpx1wnF7450053dx7kdlCvQVn15HSrK5d' /></div>
 
         <h2>Suggest</h2>
         <div><Suggest options={['eenie', 'meenie', 'miney', 'mo']} /></div>
