@@ -1,5 +1,8 @@
 'use strict';
 
+import * as Util from './util/Util';
+import Password from './components/Password';
+import FileSelector from './components/FileSelector';
 import Dialog from './components/Dialog';
 import Actions from './components/Actions';
 import Form from './components/Form';
@@ -15,6 +18,8 @@ ReactDOM.render(
     <div style={{ padding: '20px' }}>
         <h1>Component discoverer</h1>
 
+        <h2>Is Mobile? {Util.Mobilecheck()?"true":"false"}</h2>
+
         <h2>Logo</h2>
         <div style={{ display: 'inline-block', background: 'purple' }}><Logo /></div>
 
@@ -22,6 +27,10 @@ ReactDOM.render(
         <div>Button with onClick: <Button onClick={() => alert('ouch')}>Click me</Button></div>
         <div>A link: <Button href="http://reactjs.com">Follow me</Button></div>
         <div>Custom class name: <Button className="custom">I do nothing</Button></div>
+
+        <h2>Password</h2>
+        <div><Password mode='encrypt' /></div>
+        <div><Password mode='decrypt' defaultValue='U2FsdGVkX1+g834fokw18q0Ak9eQ4gFGpx1wnF7450053dx7kdlCvQVn15HSrK5d' /></div>
 
         <h2>Suggest</h2>
         <div><Suggest options={['eenie', 'meenie', 'miney', 'mo']} /></div>
@@ -40,6 +49,7 @@ ReactDOM.render(
             <tr><td>Rating</td>          <td><FormInput type="rating" defaultValue={4} /></td></tr>
             <tr><td>Suggest</td>         <td><FormInput type="suggest" options={['red', 'green', 'blue']} defaultValue="green" /></td></tr>
             <tr><td>Vanilla textarea</td><td><FormInput type="text" /></td></tr>
+            <tr><td>File Input</td>      <td><FormInput type="file" /></td></tr>
         </tbody></table>
 
         <h2>Form</h2>
@@ -49,6 +59,10 @@ ReactDOM.render(
                 { label: 'Greetings', id: 'freetext' },
             ]}
             initialData={{ rateme: 4, freetext: 'Hello' }} />
+
+        <h2>File Selector</h2>
+        
+        <div><FileSelector onAction={(f)=>alert("Processing..." + f)} /></div>
 
         <h2>Actions</h2>
         <div><Actions onAction={type => alert(type)} /></div>

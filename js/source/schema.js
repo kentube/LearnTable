@@ -9,6 +9,26 @@ export default [
         align: 'left', // align in `Excel`
     },
     {
+        id: 'link',
+        label: 'Link',
+        type: 'text',
+        show: true,
+        sample: 'https://abc.com',
+    },
+    {
+        id: 'username',
+        label: 'User Name',
+        show: false,
+        sample: 'myusername',
+    },
+    {
+        id: 'password',
+        label: 'Password',
+        type: 'password',
+        show: false,
+        sample: 'mypassword',
+    },
+    {
         id: 'year',
         label: 'Year',
         type: 'year',

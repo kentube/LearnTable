@@ -1,3 +1,40 @@
+.ActionCompact span {
+    cursor: pointer;
+    margin: 5px 7px;
+    text-align: center;
+    transition-duration: 0.1s;
+    transition-property: transform;
+  }
+
+  .ActionCompact span:hover {
+    transform: scale(1.1);
+  }
+
+  .ActionCompact .ActionsName {
+    font-size: 6.1vw;    
+  }
+  .ActionCompact .ActionsNameCompact {
+    font-size: 7.25vw;    
+  }
+  
+  .ActionCompact .ActionsInfo {
+    border-color: #3498DB;
+    color: #3498DB;
+  }
+  
+  .ActionCompact .ActionsEditCompact {
+    font-size: 7.25vw;    
+  }
+
+  .ActionCompact .ActionsDelete {
+    border-color: #B7477D;
+    color: #B7477D;
+  }
+  .ActionCompact .ActionsDeleteCompact {
+    border-color: #B7477D;
+    color: #B7477D;
+    font-size: 7.25vw;    
+  }
 .Actions span {
     border-radius: 150%;
     border: 2px solid black;
@@ -103,17 +140,23 @@
     margin: 10px;
   }.Excel input {
     font: 16px Arial;
+    /* font-size:10vw; */
   }
   
   .Excel td {
     background-color: #ffffff;
     padding: 5px;
+    /* font-size: 1.4vw; */
   }
-  
+  /* .Excel .ExceltdMobile {
+    font-size: 14vw;
+  } */
+
   .Excel th {
     color: #e01e1e;
     cursor: pointer;
     font-size: 13px;
+    /* font-size: 1.7vw; */
     font-weight: normal;
     padding: 5px;
     text-align: center;
@@ -138,6 +181,16 @@
   .Excel .ExcelDataCenter {
     text-align: center;
   }
+  /* @media screen and (min-width: 501px) {
+    .Excel .ExcelDataCenter {
+      font-size: 8.25vw;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .Excel .ExcelDataCenter {
+      font-size: 6.1vw;
+    }
+  } */
   
   .Excel .ExcelDataLeft {
     padding: 0 10px;
@@ -147,7 +200,13 @@
   .Excel .ExcelDataRight {
     text-align: right;
   }
-  .Form .FormLabel {
+  .FileSelector {
+  display: inline;
+}
+
+.FileSelector .FileSelectorButton {
+  font-size: 16px;
+}.Form .FormLabel {
     color: rgb(207, 8, 8);
     display: block;
     font-size: 12px;
@@ -157,16 +216,60 @@
   .Form .FormRow {
     padding-left: 20px;
     text-align: left;
+  }
+
+  .Form .FormTextArea {
+    width: 78%;
   }.FormInput {
   background: gold
 }
 .Logo {
-  background-image: url('images/winepad-logo.png');
+  background-image: url('images/desk_2.png');
   background-size: cover;
   display: inline-block;
   height: 60px;
   vertical-align: middle;
   width: 100px;
+}.Password {
+    font-size: 12px;
+    padding: 3px;
+    border: 2px solid red;
+    border-radius: 5px;
+}
+
+.Password .PasswordModeCheckbox {
+    justify-content: right;
+    background-color: #6f001b;
+    border-radius: 28px;
+    border: 0;
+    box-shadow: 0px 1px 1px #d9d9d9;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 15px;
+    text-decoration: none;
+    transition-duration: 0.1s;
+    transition-property: transform;
+}
+.Password .PasswordModeCheckbox:hover {
+    transform: scale(1.1);
+}
+
+.Password .PasswordLabel {
+    width: 77px;
+    /* display: -webkit-inline-box; */
+}
+
+.Password .PasswordInput {
+    /* left: 120px; */
+    position: relative;
+}
+
+.Password .PasswordCheckbox {
+    /* left: 300px; */
+    position: relative;
 }/* thanks to https://css-tricks.com/star-ratings/ */
 .Rating {
     cursor: pointer;
@@ -196,27 +299,55 @@
   .Suggest {
     background-color: #4ba8b4;
 }
-.Whinepad .WhinepadToolbar {
+
+.Workpad .WorkpadToolbar {
+    font: 16px Arial;
+}
+@media screen and (min-width: 501px) {
+  .Workpad .WorkpadToolbar {
     margin: 40px;
   }
+}
+@media screen and (max-width: 500px) {
+  .Workpad .WorkpadToolbar {
+    margin: 10px;
+  }
+}
+
+.Workpad .WorkpadDatagrid {
+  clear: both;
+  padding-top: 20px;
+}
+@media screen and (min-width: 501px) {
+  .Workpad .WorkpadDatagrid {
+    margin: 40px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .Workpad .WorkpadDatagrid {
+    margin: 10px;
+  }
+}
   
-  .Whinepad .WhinepadToolbarAdd {
+  .Workpad .WorkpadToolbarAdd {
     float: left;
   }
-  
-  .Whinepad .WhinepadToolbarSearch {
+  .Workpad .WorkpadToolbarSearch {
     float: right;
   }
-  
-  .Whinepad .WhinepadToolbarAddButton {
-    font-size: 32px;
+  .Workpad .WorkpadToolbarImportExport {
+    display: block;
   }
-  
-  .Whinepad .WhinepadDatagrid {
-    clear: both;
-    margin: 40px;
-    padding-top: 20px;
+  .Workpad .WorkpadToolbarAddButton {
+    font-size: 16px;
   }
+  .Workpad .WorkpadToolbarDelButton {
+    font-size: 16px;
+  }
+  .Workpad .WorkpadToolbarExportButton {
+    font-size: 16px;
+  }
+
   
   html {
   background: rgb(5, 129, 190);
@@ -225,10 +356,16 @@
 
 .schema-name {
     color: #333333;
+    /* font-size: 18px; */
     font-size: 18px;
     font-weight: bold;
   }
   
+  .schema-link {
+    color: rgb(207, 36, 170);
+    font-size: 16px;
+  }
+
   .schema-year {
     color: gray;
     font-size: 16px;
